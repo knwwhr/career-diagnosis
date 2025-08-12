@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>커리어 진단 도구</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/additional.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>AI 커리어 진단</h1>
+            <p>강점을 발견하고 최적의 커리어를 찾아보세요</p>
+        </header>
+
+        <!-- Main Content -->
+        <main id="main-content">
+            <!-- Landing Page -->
+            <section id="landing" class="section active">
+                <div class="hero">
+                    <h2>📍 3단계 진단으로 나만의 커리어 찾기</h2>
+                    
+                    <!-- 컴팩트한 프로세스 카드 -->
+                    <div class="process-cards-compact">
+                        <div class="compact-card">
+                            <div class="compact-number">1</div>
+                            <div class="compact-content">
+                                <h4>내 성향 파악 - 가치관과 성격 분석 (4분)</h4>
+                            </div>
+                        </div>
+                        <div class="compact-arrow">→</div>
+                        <div class="compact-card">
+                            <div class="compact-number">2</div>
+                            <div class="compact-content">
+                                <h4>맞는 직업 찾기 - 관심 분야별 추천 (3분)</h4>
+                            </div>
+                        </div>
+                        <div class="compact-arrow">→</div>
+                        <div class="compact-card">
+                            <div class="compact-number">3</div>
+                            <div class="compact-content">
+                                <h4>취업확률 높이기 - 필요한 스펙 체크 (3분)</h4>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 결과 미리보기 -->
+                    <div class="results-preview">
+                        <h3>🎁 진단 결과로 알 수 있는 것들</h3>
+                        <div class="preview-items">
+                            <div class="preview-item">
+                                <span class="preview-icon">📊</span>
+                                <span class="preview-text">내 성격 그래프</span>
+                            </div>
+                            <div class="preview-item">
+                                <span class="preview-icon">💼</span>
+                                <span class="preview-text">추천 직업 TOP 5</span>
+                            </div>
+                            <div class="preview-item">
+                                <span class="preview-icon">📝</span>
+                                <span class="preview-text">준비할 스펙 리스트</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="start-section">
+                        <button id="start-assessment" class="btn-primary-large">✨ 지금 시작하기</button>
+                        <p class="info-text">10분만에 진단하고 나만의 커리어를 공략하세요!</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 1: Strengths Discovery -->
+            <section id="step1" class="section">
+                <div class="step-header">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 33%"></div>
+                    </div>
+                    <h2>1단계: 강점 발견</h2>
+                    <p>당신의 가치관과 성향을 파악합니다</p>
+                </div>
+                
+                <div class="question-container" id="step1-questions">
+                    <!-- Questions will be dynamically loaded here -->
+                </div>
+                
+                <div class="navigation">
+                    <button id="step1-prev" class="btn-secondary">이전</button>
+                    <button id="step1-next" class="btn-primary">다음</button>
+                </div>
+            </section>
+
+            <!-- Step 2: Job Matching -->
+            <section id="step2" class="section">
+                <div class="step-header">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 66%"></div>
+                    </div>
+                    <h2>2단계: 직무 매칭</h2>
+                    <p>관심 분야와 역량을 분석합니다</p>
+                </div>
+                
+                <div class="question-container" id="step2-questions">
+                    <!-- Questions will be dynamically loaded here -->
+                </div>
+                
+                <div class="navigation">
+                    <button id="step2-prev" class="btn-secondary">이전</button>
+                    <button id="step2-next" class="btn-primary">다음</button>
+                </div>
+            </section>
+
+            <!-- Step 3: Action Plan -->
+            <section id="step3" class="section">
+                <div class="step-header">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 100%"></div>
+                    </div>
+                    <h2>3단계: 실행 계획</h2>
+                    <p>목표와 준비 계획을 수립합니다</p>
+                </div>
+                
+                <div class="question-container" id="step3-questions">
+                    <!-- Questions will be dynamically loaded here -->
+                </div>
+                
+                <div class="navigation">
+                    <button id="step3-prev" class="btn-secondary">이전</button>
+                    <button id="step3-next" class="btn-primary">결과 보기</button>
+                </div>
+            </section>
+
+            <!-- Results Page -->
+            <section id="results" class="section">
+                <div class="results-header">
+                    <h2>진단 결과</h2>
+                    <p>당신만의 커리어 분석 리포트</p>
+                </div>
+                
+                <div class="results-container">
+                    <!-- Profile Summary -->
+                    <div class="result-card">
+                        <h3>개인 성향 분석</h3>
+                        <div id="profile-summary"></div>
+                    </div>
+
+                    <!-- Strengths Chart -->
+                    <div class="result-card">
+                        <h3>강점 분석</h3>
+                        <p class="chart-description">
+                            <strong>RIASEC 성향 분석</strong> - 개인의 흥미와 성격을 6가지 유형(현실형, 탐구형, 예술형, 사회형, 진취형, 관습형)으로 분석하여 적합한 직업 환경을 제시하는 진단 도구입니다.
+                        </p>
+                        <canvas id="strengths-chart"></canvas>
+                    </div>
+
+                    <!-- Job Matching -->
+                    <div class="result-card">
+                        <h3>추천 직무</h3>
+                        <div id="job-recommendations"></div>
+                    </div>
+
+                    <!-- Action Plan -->
+                    <div class="result-card">
+                        <h3>부족한 스펙 보완을 위한 추천</h3>
+                        <div id="action-plan"></div>
+                    </div>
+                </div>
+
+                <div class="results-actions">
+                    <button id="results-prev" class="btn-secondary">이전 단계로</button>
+                    <button id="consulting-btn" class="btn-primary btn-consulting">맞춤형 취업컨설팅 받아보기</button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2025 OpenConnect Co., Ltd. All rights reserved.<br>
+            Powered by (주)오픈커넥트 - 모든 서비스 및 콘텐츠의 권리는 (주)오픈커넥트에 귀속됩니다.</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="assets/js/data.js"></script>
+    <script src="assets/js/assessment.js"></script>
+    <script src="assets/js/results.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
