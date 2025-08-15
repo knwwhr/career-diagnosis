@@ -543,7 +543,7 @@ class AssessmentManager {
                         잠깐 멈추기
                     </button>
                     <button class="btn-primary" onclick="if(!this.disabled){this.disabled=true; this.closest('.popup-overlay').remove(); window.tempCallback();}">
-                        다음 단계로! 🚀
+                        다음 단계로
                     </button>
                 </div>
             </div>

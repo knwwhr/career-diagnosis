@@ -48,12 +48,12 @@ class CareerAssessmentApp {
     setupErrorHandling() {
         window.addEventListener('error', (event) => {
             console.error('Global error:', event.error);
-            this.showError('예상치 못한 오류가 발생했습니다. 페이지를 새로고침해 주세요.');
+            // 오류 팝업 제거 - 콘솔에만 기록
         });
 
         window.addEventListener('unhandledrejection', (event) => {
             console.error('Unhandled promise rejection:', event.reason);
-            this.showError('처리되지 않은 오류가 발생했습니다.');
+            // 오류 팝업 제거 - 콘솔에만 기록
         });
     }
 
@@ -193,7 +193,7 @@ class CareerAssessmentApp {
         dialog.innerHTML = `
             <div class="resume-dialog">
                 <h3>이전 진단을 계속하시겠습니까?</h3>
-                <p>저장된 진단 데이터가 있습니다. 이어서 진행하시겠습니까?</p>
+                <p>저장된 진단 데이터가 있습니다.<br>이어서 진행하시겠습니까?</p>
                 <div class="dialog-buttons">
                     <button class="btn-secondary" onclick="this.closest('.resume-dialog-overlay').remove()">새로 시작</button>
                     <button class="btn-primary" onclick="app.resumeAssessment()">계속하기</button>
