@@ -129,8 +129,8 @@ class AssessmentManager {
     createMultipleChoiceOptions(question, stepNum) {
         return question.options.map(option => `
             <div class="option" onclick="selectSingleOption(event, '${stepNum}', '${question.id}', '${option.id}', this)">
-                <input type="radio" name="${question.id}" value="${option.id}" id="${option.id}">
-                <label for="${option.id}">${option.text}</label>
+                <input type="radio" name="${question.id}" value="${option.id}" id="${option.id}" onclick="event.stopPropagation(); selectSingleOption(event, '${stepNum}', '${question.id}', '${option.id}', this.closest('.option'))">
+                <label for="${option.id}" onclick="event.stopPropagation(); selectSingleOption(event, '${stepNum}', '${question.id}', '${option.id}', this.closest('.option'))">${option.text}</label>
             </div>
         `).join('');
     }
@@ -143,7 +143,10 @@ class AssessmentManager {
                 <div class="option multiple-select-option" onclick="selectMultipleOption(event, '${stepNum}', '${question.id}', '${option.id}', this, ${question.maxSelections || 999})">
                     <span class="check-icon">✓</span>
                     <input type="hidden" name="${question.id}" value="${option.id}" id="${option.id}">
-                    <label for="${option.id}">${option.text}</label>
+                    <label for="${option.id}">
+                        <span class="option-title">${option.text}</span>
+                        ${option.desc ? `<span class="option-desc">${option.desc}</span>` : ''}
+                    </label>
                 </div>
             `).join('')}
         `;
@@ -198,13 +201,15 @@ class AssessmentManager {
             </div>
             ${question.options.map(option => `
             <div class="scale-question">
-                <label class="scale-label">${option.text}</label>
+                <div class="scale-label-container">
+                    <label class="scale-label">${option.text}</label>
+                </div>
                 <div class="scale-rating">
                     ${option.scale.map(value => `
-                        <div class="scale-option">
+                        <div class="scale-option" onclick="event.preventDefault(); document.getElementById('${option.id}_${value}').click();">
                             <input type="radio" name="${option.id}" value="${value}" id="${option.id}_${value}"
-                                   onchange="saveScaleResponse('${stepNum}', '${question.id}', '${option.id}', ${value})">
-                            <label for="${option.id}_${value}" class="scale-radio-label">${value}</label>
+                                   onchange="saveScaleResponse('${stepNum}', '${question.id}', '${option.id}', ${value})" onclick="event.stopPropagation();">
+                            <label for="${option.id}_${value}" class="scale-radio-label" onclick="event.stopPropagation(); document.getElementById('${option.id}_${value}').click();">${value}</label>
                             <div class="scale-description">${scaleDescriptions[value]}</div>
                         </div>
                     `).join('')}
@@ -803,23 +808,26 @@ class AssessmentManager {
             }).join(', ');
         }
 
+        // Get RIASEC scores from the last calculation
+        const results = AssessmentAPI.calculateResults(this.responses);
+        const riasecScores = results.riasecScores;
+        const riasecDisplay = `R:${riasecScores.R} I:${riasecScores.I} A:${riasecScores.A} S:${riasecScores.S} E:${riasecScores.E} C:${riasecScores.C}`;
+
         container.innerHTML = `
             <div class="profile-item">
-                <span class="profile-label">핵심 가치 
-                    <span class="info-tooltip" onclick="showTooltip('values')">ⓘ</span>
-                </span>
+                <span class="profile-label">핵심 가치</span>
                 <span class="profile-value">${topValues}</span>
             </div>
             <div class="profile-item">
-                <span class="profile-label">성향 유형 
-                    <span class="info-tooltip" onclick="showTooltip('riasec')">ⓘ</span>
-                </span>
+                <span class="profile-label">성향 유형</span>
                 <span class="profile-value">${personalityType}</span>
             </div>
             <div class="profile-item">
-                <span class="profile-label">관심 분야 
-                    <span class="info-tooltip" onclick="showTooltip('industries')">ⓘ</span>
-                </span>
+                <span class="profile-label">RIASEC 성향 점수</span>
+                <span class="profile-value">${riasecDisplay}</span>
+            </div>
+            <div class="profile-item">
+                <span class="profile-label">관심 분야</span>
                 <span class="profile-value">${topIndustries}</span>
             </div>
         `;
@@ -838,7 +846,8 @@ class AssessmentManager {
                         <strong>적합도 근거:</strong> ${job.explanation ? job.explanation.join(', ') : '종합 평가'}
                     </div>
                     <div class="job-details">
-                        <small>성장 전망: ${job.growth_outlook} | 예상 연봉: ${job.avg_salary}</small>
+                        ${job.growth_outlook && job.avg_salary ? `<small><strong>성장 전망:</strong> ${job.growth_outlook} | <strong>예상 연봉:</strong> ${job.avg_salary}</small>` : ''}
+                        ${job.data_source ? `<br><small class="data-source"><strong>정보 출처:</strong> ${job.data_source}</small>` : ''}
                     </div>
                 </div>
             `;
@@ -861,9 +870,9 @@ class AssessmentManager {
                     <small>예상 기간: ${action.timeline} | 우선순위: ${action.priority}</small>
                 </div>
                 <div class="action-link">
-                    <a href="https://insidejob.kr" target="_blank" class="btn-link">
-                        📊 좀 더 자세히 알아보기
-                    </a>
+                    <span class="practical-advice">
+                        💡 <strong>실행 팁:</strong> ${action.practicalTip || '단계별로 차근차근 진행하되, 완벽함보다는 꾸준함을 목표로 하세요.'}
+                    </span>
                 </div>
             </div>
         `).join('');
@@ -1030,6 +1039,39 @@ function showTooltip(type) {
     }
 }
 
+// Question tooltip function
+function showQuestionTooltip(questionId, tooltipText) {
+    // 기존 툴팁이 있으면 제거
+    const existingTooltip = document.querySelector('.question-tooltip-popup');
+    if (existingTooltip) {
+        existingTooltip.remove();
+        return; // 토글 방식으로 동작
+    }
+
+    const popup = document.createElement('div');
+    popup.className = 'question-tooltip-popup';
+    popup.innerHTML = `
+        <div class="tooltip-popup-content">
+            <div class="tooltip-popup-header">
+                <h4>도움말</h4>
+                <button class="tooltip-popup-close" onclick="this.closest('.question-tooltip-popup').remove()">✕</button>
+            </div>
+            <div class="tooltip-popup-body">
+                <p>${tooltipText}</p>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(popup);
+    
+    // 3초 후 자동 닫기 (모바일 UX 고려)
+    setTimeout(() => {
+        if (popup && popup.parentNode) {
+            popup.remove();
+        }
+    }, 3000);
+}
+
 // Global functions for event handlers
 function selectSingleOption(event, stepNum, questionId, optionId, element) {
     event.preventDefault();
@@ -1054,21 +1096,62 @@ function selectMultipleOption(event, stepNum, questionId, optionId, element, max
     const questionContainer = element.closest('.question');
     const selectedOptions = questionContainer.querySelectorAll('.option.selected');
     const isCurrentlySelected = element.classList.contains('selected');
+    const isNoneOption = optionId === 'none'; // "아무것도 준비 안됨" 옵션
     
     if (isCurrentlySelected) {
         // Deselect
         element.classList.remove('selected');
         element.querySelector('input').checked = false;
-    } else {
-        // Check if we can select more
-        if (selectedOptions.length >= maxSelections) {
-            alert(`최대 ${maxSelections}개까지만 선택할 수 있습니다.`);
-            return;
-        }
         
-        // Select
-        element.classList.add('selected');
-        element.querySelector('input').checked = true;
+        // "아무것도 준비 안됨" 해제시 다른 옵션들 활성화
+        if (isNoneOption) {
+            const allOptions = questionContainer.querySelectorAll('.option');
+            allOptions.forEach(opt => {
+                if (opt !== element) {
+                    opt.classList.remove('disabled');
+                    opt.style.opacity = '1';
+                    opt.style.pointerEvents = 'auto';
+                }
+            });
+        }
+    } else {
+        if (isNoneOption) {
+            // "아무것도 준비 안됨" 선택시
+            // 다른 모든 옵션 해제 및 비활성화
+            const allOptions = questionContainer.querySelectorAll('.option');
+            allOptions.forEach(opt => {
+                if (opt !== element) {
+                    opt.classList.remove('selected');
+                    opt.querySelector('input').checked = false;
+                    opt.classList.add('disabled');
+                    opt.style.opacity = '0.5';
+                    opt.style.pointerEvents = 'none';
+                }
+            });
+            
+            element.classList.add('selected');
+            element.querySelector('input').checked = true;
+        } else {
+            // 다른 옵션 선택시
+            const noneOption = questionContainer.querySelector('.option input[value="none"]');
+            if (noneOption) {
+                const noneElement = noneOption.closest('.option');
+                if (noneElement.classList.contains('selected')) {
+                    // "아무것도 준비 안됨"이 선택되어 있으면 무시
+                    return;
+                }
+            }
+            
+            // Check if we can select more
+            if (selectedOptions.length >= maxSelections) {
+                alert(`최대 ${maxSelections}개까지만 선택할 수 있습니다.`);
+                return;
+            }
+            
+            // Select
+            element.classList.add('selected');
+            element.querySelector('input').checked = true;
+        }
     }
     
     // Get all selected values
@@ -1141,6 +1224,7 @@ function saveScaleResponse(stepNum, questionId, optionId, value) {
     currentResponses[optionId] = value;
     window.assessmentManager.saveResponse(parseInt(stepNum), questionId, currentResponses);
 }
+
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {

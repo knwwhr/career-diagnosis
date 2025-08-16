@@ -75,16 +75,16 @@ const ASSESSMENT_DATA = {
                 type: "multiple_select",
                 question: "어떤 분야에서 일해보고 싶나요? 3개까지 골라주세요",
                 options: [
-                    { id: "it", text: "IT/테크", category: "technology" },
-                    { id: "finance", text: "금융/투자", category: "business" },
-                    { id: "marketing", text: "마케팅/광고", category: "creative" },
-                    { id: "education", text: "교육", category: "service" },
-                    { id: "healthcare", text: "의료/건강", category: "service" },
-                    { id: "manufacturing", text: "제조업", category: "production" },
-                    { id: "retail", text: "유통/쇼핑", category: "business" },
-                    { id: "media", text: "미디어/콘텐츠", category: "creative" },
-                    { id: "consulting", text: "컨설팅", category: "business" },
-                    { id: "startup", text: "스타트업", category: "technology" }
+                    { id: "technology", text: "기술/개발 (IT, 소프트웨어, 엔지니어링)", category: "technology" },
+                    { id: "business_strategy", text: "경영/기획 (전략, 컨설팅, 기획)", category: "business" },
+                    { id: "marketing_sales", text: "마케팅/영업 (광고, 브랜딩, 세일즈)", category: "business" },
+                    { id: "creative_design", text: "디자인/창작 (시각디자인, UX, 콘텐츠)", category: "creative" },
+                    { id: "finance", text: "금융/투자 (은행, 증권, 핀테크)", category: "business" },
+                    { id: "education_research", text: "교육/연구 (강의, 트레이닝, R&D)", category: "service" },
+                    { id: "healthcare", text: "의료/헬스케어 (의료, 바이오, 웰니스)", category: "service" },
+                    { id: "media_entertainment", text: "미디어/엔터 (방송, 게임, 콘텐츠)", category: "creative" },
+                    { id: "manufacturing", text: "제조/생산 (제조업, 품질관리, 물류)", category: "production" },
+                    { id: "public_social", text: "공공/사회 (정부, NGO, 사회적기업)", category: "service" }
                 ],
                 maxSelections: 3
             },
@@ -98,7 +98,11 @@ const ASSESSMENT_DATA = {
                     { id: "marketing_manager", text: "마케터", scale: [1, 2, 3, 4, 5] },
                     { id: "product_manager", text: "기획자", scale: [1, 2, 3, 4, 5] },
                     { id: "consultant", text: "컨설턴트", scale: [1, 2, 3, 4, 5] },
-                    { id: "designer", text: "디자이너", scale: [1, 2, 3, 4, 5] }
+                    { id: "designer", text: "디자이너", scale: [1, 2, 3, 4, 5] },
+                    { id: "content_creator", text: "콘텐츠 크리에이터", scale: [1, 2, 3, 4, 5] },
+                    { id: "business_analyst", text: "비즈니스 분석가", scale: [1, 2, 3, 4, 5] },
+                    { id: "financial_analyst", text: "금융 분석가", scale: [1, 2, 3, 4, 5] },
+                    { id: "teacher", text: "교육/강사", scale: [1, 2, 3, 4, 5] }
                 ]
             },
             {
@@ -111,7 +115,11 @@ const ASSESSMENT_DATA = {
                     { id: "design", text: "디자인", scale: [1, 2, 3, 4, 5] },
                     { id: "writing", text: "글쓰기", scale: [1, 2, 3, 4, 5] },
                     { id: "presentation", text: "발표하기", scale: [1, 2, 3, 4, 5] },
-                    { id: "project_mgmt", text: "프로젝트 관리", scale: [1, 2, 3, 4, 5] }
+                    { id: "planning", text: "기획/계획수립", scale: [1, 2, 3, 4, 5] },
+                    { id: "communication", text: "소통/커뮤니케이션", scale: [1, 2, 3, 4, 5] },
+                    { id: "creativity", text: "창의성/아이디어", scale: [1, 2, 3, 4, 5] },
+                    { id: "analysis", text: "분석/사고력", scale: [1, 2, 3, 4, 5] },
+                    { id: "technical", text: "기술/도구 활용", scale: [1, 2, 3, 4, 5] }
                 ]
             }
         ]
@@ -171,10 +179,11 @@ const JOB_DATABASE = {
         category: "IT/개발",
         required_skills: ["coding", "problem_solving", "technical"],
         riasec_match: ["I", "R"],
-        industry: ["it", "startup"],
-        description: "웹, 모바일, 시스템 소프트웨어를 설계하고 개발하는 일을 해요",
-        growth_outlook: "매우 높음",
-        avg_salary: "3500-6000만원",
+        industry: ["technology"],
+        description: "컴퓨터 시스템에서 실행되는 소프트웨어를 설계, 개발, 테스트, 유지보수하는 업무",
+        growth_outlook: "증가",
+        avg_salary: "중위값 기준 4500만원 내외",
+        data_source: "한국표준직업분류(통계청), 고용노동부 워크넷",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 4,
@@ -188,10 +197,8 @@ const JOB_DATABASE = {
         category: "IT/개발",
         required_skills: ["coding", "design", "creativity"],
         riasec_match: ["A", "I"],
-        industry: ["it", "startup", "media"],
+        industry: ["technology", "media_entertainment"],
         description: "사용자가 직접 보고 사용하는 웹사이트 화면을 만들어요",
-        growth_outlook: "높음",
-        avg_salary: "3200-5500만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 5,
@@ -205,10 +212,8 @@ const JOB_DATABASE = {
         category: "IT/개발",
         required_skills: ["coding", "analysis", "technical"],
         riasec_match: ["I", "R"],
-        industry: ["it", "startup", "finance"],
+        industry: ["technology", "finance"],
         description: "사용자 눈에 보이지 않는 서버와 데이터베이스 시스템을 만들어요",
-        growth_outlook: "매우 높음",
-        avg_salary: "3800-6500만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 4,
@@ -222,10 +227,8 @@ const JOB_DATABASE = {
         category: "IT/개발", 
         required_skills: ["coding", "design", "technical"],
         riasec_match: ["I", "A"],
-        industry: ["it", "startup", "media"],
+        industry: ["technology", "media_entertainment"],
         description: "스마트폰에서 사용하는 앱을 만들고 관리해요",
-        growth_outlook: "높음",
-        avg_salary: "3500-6000만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 4,
@@ -239,10 +242,11 @@ const JOB_DATABASE = {
         category: "IT/분석",
         required_skills: ["analysis", "data_analysis", "coding"],
         riasec_match: ["I", "R"],
-        industry: ["it", "finance", "consulting"],
-        description: "빅데이터와 AI 기술로 비즈니스 문제를 해결해요",
-        growth_outlook: "매우 높음",
-        avg_salary: "5000-9000만원",
+        industry: ["technology", "finance", "business_strategy"],
+        description: "통계학, 수학, 컴퓨터과학 기법을 활용하여 대용량 데이터에서 의미있는 정보를 추출하고 분석하는 업무",
+        growth_outlook: "증가",
+        avg_salary: "중위값 기준 5500만원 내외",
+        data_source: "한국표준직업분류(통계청), 고용노동부 워크넷",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 4,
@@ -256,10 +260,8 @@ const JOB_DATABASE = {
         category: "IT/분석",
         required_skills: ["analysis", "data_analysis", "problem_solving"],
         riasec_match: ["I", "C"],
-        industry: ["it", "finance", "consulting"],
+        industry: ["technology", "finance", "business_strategy"],
         description: "데이터를 수집하고 분석해서 의미 있는 인사이트를 찾아내요",
-        growth_outlook: "매우 높음",
-        avg_salary: "4000-7000만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 3,
@@ -273,10 +275,8 @@ const JOB_DATABASE = {
         category: "IT/개발",
         required_skills: ["coding", "analysis", "technical"],
         riasec_match: ["I", "R"],
-        industry: ["it", "startup"],
+        industry: ["technology"],
         description: "인공지능 시스템과 머신러닝 모델을 개발하고 구현해요",
-        growth_outlook: "매우 높음",
-        avg_salary: "5500-10000만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 4,
@@ -290,10 +290,8 @@ const JOB_DATABASE = {
         category: "IT/인프라",
         required_skills: ["technical", "problem_solving", "analysis"],
         riasec_match: ["I", "R"],
-        industry: ["it", "startup"],
+        industry: ["technology"],
         description: "개발과 운영 환경을 연결하고 자동화 시스템을 만들어요",
-        growth_outlook: "높음",
-        avg_salary: "4500-8000만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 3,
@@ -307,10 +305,8 @@ const JOB_DATABASE = {
         category: "IT/보안",
         required_skills: ["technical", "analysis", "problem_solving"],
         riasec_match: ["I", "C"],
-        industry: ["it", "finance"],
+        industry: ["technology", "finance"],
         description: "해킹과 사이버 공격으로부터 시스템을 보호하는 일을 해요",
-        growth_outlook: "매우 높음",
-        avg_salary: "4000-8000만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 2,
@@ -324,10 +320,8 @@ const JOB_DATABASE = {
         category: "IT/인프라",
         required_skills: ["technical", "problem_solving", "planning"],
         riasec_match: ["R", "C"],
-        industry: ["it", "manufacturing"],
+        industry: ["technology", "manufacturing"],
         description: "회사의 컴퓨터 시스템과 네트워크를 관리하고 유지보수해요",
-        growth_outlook: "보통",
-        avg_salary: "3200-5500만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 2,
@@ -341,10 +335,8 @@ const JOB_DATABASE = {
         category: "IT/개발",
         required_skills: ["coding", "technical", "analysis"],
         riasec_match: ["I", "R"],
-        industry: ["it", "startup", "finance"],
+        industry: ["technology", "finance"],
         description: "암호화폐와 블록체인 기술을 사용한 시스템을 개발해요",
-        growth_outlook: "높음",
-        avg_salary: "4500-8500만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 4,
@@ -358,10 +350,8 @@ const JOB_DATABASE = {
         category: "IT/품질관리",
         required_skills: ["analysis", "technical", "problem_solving"],
         riasec_match: ["C", "I"],
-        industry: ["it", "manufacturing"],
+        industry: ["technology", "manufacturing"],
         description: "소프트웨어의 버그를 찾아내고 품질을 검증하는 일을 해요",
-        growth_outlook: "높음",
-        avg_salary: "3200-5800만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 3,
@@ -376,10 +366,11 @@ const JOB_DATABASE = {
         category: "마케팅/기획", 
         required_skills: ["communication", "creativity", "planning"],
         riasec_match: ["E", "A"],
-        industry: ["marketing", "startup", "retail"],
-        description: "브랜드와 제품을 알리기 위한 마케팅 전략을 세우고 실행해요",
-        growth_outlook: "높음",
-        avg_salary: "3000-5500만원",
+        industry: ["marketing_sales"],
+        description: "제품이나 서비스의 시장성을 조사하고 마케팅 전략을 수립하여 판매촉진 업무를 수행",
+        growth_outlook: "보통",
+        avg_salary: "중위값 기준 4000만원 내외",
+        data_source: "한국표준직업분류(통계청), 고용노동부 워크넷",
         work_environment: {
             indoor_work: 4,
             flexible_schedule: 4,
@@ -393,10 +384,8 @@ const JOB_DATABASE = {
         category: "마케팅/광고",
         required_skills: ["creativity", "communication", "data_analysis"],
         riasec_match: ["E", "A"],
-        industry: ["marketing", "startup", "media"],
+        industry: ["marketing_sales", "media_entertainment"],
         description: "SNS, 검색광고, 이메일 등 온라인 채널로 고객을 유치해요",
-        growth_outlook: "높음",
-        avg_salary: "3200-5500만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 4,
@@ -410,10 +399,8 @@ const JOB_DATABASE = {
         category: "마케팅/분석",
         required_skills: ["data_analysis", "creativity", "planning"],
         riasec_match: ["E", "I"],
-        industry: ["marketing", "startup", "retail"],
+        industry: ["marketing_sales"],
         description: "광고 성과를 데이터로 분석하고 최적화하는 일을 해요",
-        growth_outlook: "매우 높음",
-        avg_salary: "3500-6500만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 4,
@@ -427,10 +414,8 @@ const JOB_DATABASE = {
         category: "마케팅/기획",
         required_skills: ["creativity", "communication", "planning"],
         riasec_match: ["A", "E"],
-        industry: ["marketing", "retail", "media"],
+        industry: ["marketing_sales", "media_entertainment"],
         description: "브랜드의 정체성을 만들고 일관된 브랜드 경험을 관리해요",
-        growth_outlook: "보통",
-        avg_salary: "3800-6200만원",
         work_environment: {
             indoor_work: 4,
             flexible_schedule: 4,
@@ -444,10 +429,8 @@ const JOB_DATABASE = {
         category: "기획/전략",
         required_skills: ["analysis", "communication", "planning"],
         riasec_match: ["I", "E"],
-        industry: ["it", "consulting", "finance"],
+        industry: ["technology", "business_strategy", "finance"],
         description: "회사의 업무 과정을 분석하고 개선 방안을 찾아내요",
-        growth_outlook: "높음",
-        avg_salary: "3800-6500만원",
         work_environment: {
             indoor_work: 4,
             flexible_schedule: 3,
@@ -461,10 +444,8 @@ const JOB_DATABASE = {
         category: "영업/판매",
         required_skills: ["communication", "leadership", "presentation"],
         riasec_match: ["E", "S"],
-        industry: ["retail", "manufacturing", "finance"],
+        industry: ["marketing_sales", "manufacturing", "finance"],
         description: "고객에게 제품을 판매하고 영업팀을 이끌어가요",
-        growth_outlook: "보통",
-        avg_salary: "3500-6500만원",
         work_environment: {
             indoor_work: 3,
             flexible_schedule: 3,
@@ -478,10 +459,8 @@ const JOB_DATABASE = {
         category: "영업/관계관리",
         required_skills: ["communication", "planning", "teamwork"],
         riasec_match: ["S", "E"],
-        industry: ["marketing", "consulting", "startup"],
+        industry: ["marketing_sales", "business_strategy"],
         description: "기존 고객과의 관계를 유지하고 더 많은 비즈니스를 창출해요",
-        growth_outlook: "높음",
-        avg_salary: "3200-5800만원",
         work_environment: {
             indoor_work: 4,
             flexible_schedule: 3,
@@ -495,10 +474,8 @@ const JOB_DATABASE = {
         category: "기획/사업",
         required_skills: ["communication", "analysis", "leadership"],
         riasec_match: ["E", "I"],
-        industry: ["startup", "consulting", "it"],
+        industry: ["business_strategy", "technology"],
         description: "새로운 사업 기회를 찾아내고 파트너십을 만들어요",
-        growth_outlook: "높음",
-        avg_salary: "4000-7500만원",
         work_environment: {
             indoor_work: 3,
             flexible_schedule: 4,
@@ -512,10 +489,8 @@ const JOB_DATABASE = {
         category: "마케팅/분석",
         required_skills: ["data_analysis", "creativity", "technical"],
         riasec_match: ["I", "E"],
-        industry: ["startup", "it", "marketing"],
+        industry: ["technology", "marketing_sales"],
         description: "데이터 분석과 실험을 통해 사업 성장을 가속화해요",
-        growth_outlook: "매우 높음",
-        avg_salary: "4200-7800만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 5,
@@ -529,10 +504,8 @@ const JOB_DATABASE = {
         category: "마케팅/최적화",
         required_skills: ["data_analysis", "creativity", "technical"],
         riasec_match: ["I", "A"],
-        industry: ["marketing", "startup", "retail"],
+        industry: ["marketing_sales"],
         description: "웹사이트의 전환율을 높이기 위한 최적화 작업을 해요",
-        growth_outlook: "높음",
-        avg_salary: "3800-6500만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 4,
@@ -547,10 +520,8 @@ const JOB_DATABASE = {
         category: "기획/제품",
         required_skills: ["planning", "communication", "analysis"],
         riasec_match: ["E", "I"],
-        industry: ["it", "startup", "manufacturing"],
+        industry: ["technology", "manufacturing"],
         description: "사용자가 원하는 제품을 기획하고 개발팀과 함께 만들어가요",
-        growth_outlook: "높음", 
-        avg_salary: "4000-7000만원",
         work_environment: {
             indoor_work: 4,
             flexible_schedule: 4,
@@ -564,10 +535,8 @@ const JOB_DATABASE = {
         category: "기획/제품",
         required_skills: ["communication", "planning", "analysis"],
         riasec_match: ["E", "I"],
-        industry: ["it", "startup"],
+        industry: ["technology"],
         description: "사용자의 요구사항을 정리하고 개발 우선순위를 정해요",
-        growth_outlook: "높음",
-        avg_salary: "3800-6500만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 4,
@@ -581,10 +550,8 @@ const JOB_DATABASE = {
         category: "기획/관리",
         required_skills: ["planning", "communication", "leadership"],
         riasec_match: ["C", "E"],
-        industry: ["it", "consulting", "manufacturing"],
+        industry: ["technology", "business_strategy", "manufacturing"],
         description: "프로젝트 일정과 예산을 관리하고 팀을 조율해요",
-        growth_outlook: "높음",
-        avg_salary: "3300-5500만원",
         work_environment: {
             indoor_work: 4,
             flexible_schedule: 3,
@@ -598,10 +565,8 @@ const JOB_DATABASE = {
         category: "기획/애자일",
         required_skills: ["communication", "leadership", "teamwork"],
         riasec_match: ["S", "E"],
-        industry: ["it", "startup"],
+        industry: ["technology"],
         description: "개발팀이 효율적으로 협업할 수 있도록 프로세스를 도와줘요",
-        growth_outlook: "높음",
-        avg_salary: "3500-6000만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 4,
@@ -615,10 +580,8 @@ const JOB_DATABASE = {
         category: "기획/서비스",
         required_skills: ["creativity", "analysis", "communication"],
         riasec_match: ["A", "I"],
-        industry: ["it", "startup", "media"],
+        industry: ["technology", "media_entertainment"],
         description: "새로운 서비스를 기획하고 사용자 경험을 설계해요",
-        growth_outlook: "높음",
-        avg_salary: "3500-6200만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 4,
@@ -633,10 +596,8 @@ const JOB_DATABASE = {
         category: "디자인/UX",
         required_skills: ["design", "creativity", "analysis"],
         riasec_match: ["A", "I"],
-        industry: ["it", "startup", "media"],
+        industry: ["technology", "creative_design", "media_entertainment"],
         description: "사용자가 쓰기 편한 앱과 웹사이트 화면을 디자인해요",
-        growth_outlook: "높음",
-        avg_salary: "3500-6000만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 5,
@@ -650,10 +611,8 @@ const JOB_DATABASE = {
         category: "디자인/시각",
         required_skills: ["design", "creativity"],
         riasec_match: ["A", "R"],
-        industry: ["media", "marketing", "startup"],
+        industry: ["creative_design", "media_entertainment", "marketing_sales"],
         description: "포스터, 로고, 브랜드 이미지 등 시각적인 디자인을 만들어요",
-        growth_outlook: "보통",
-        avg_salary: "2800-4800만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 4,
@@ -667,10 +626,8 @@ const JOB_DATABASE = {
         category: "디자인/웹",
         required_skills: ["design", "technical", "creativity"],
         riasec_match: ["A", "R"],
-        industry: ["it", "startup", "media"],
+        industry: ["technology", "creative_design", "media_entertainment"],
         description: "웹사이트의 레이아웃과 디자인을 기획하고 구현해요",
-        growth_outlook: "높음",
-        avg_salary: "3000-5200만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 4,
@@ -684,10 +641,8 @@ const JOB_DATABASE = {
         category: "디자인/브랜드",
         required_skills: ["creativity", "design", "communication"],
         riasec_match: ["A", "E"],
-        industry: ["marketing", "media", "startup"],
+        industry: ["creative_design", "marketing_sales", "media_entertainment"],
         description: "브랜드의 정체성을 시각적으로 표현하는 디자인을 만들어요",
-        growth_outlook: "보통",
-        avg_salary: "3200-5500만원",
         work_environment: {
             indoor_work: 4,
             flexible_schedule: 4,
@@ -701,10 +656,8 @@ const JOB_DATABASE = {
         category: "디자인/영상",
         required_skills: ["creativity", "design", "technical"],
         riasec_match: ["A", "R"],
-        industry: ["media", "marketing", "startup"],
+        industry: ["creative_design", "media_entertainment", "marketing_sales"],
         description: "영상과 애니메이션을 사용한 시각적 콘텐츠를 만들어요",
-        growth_outlook: "높음",
-        avg_salary: "3000-5800만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 4,
@@ -718,10 +671,8 @@ const JOB_DATABASE = {
         category: "디자인/게임",
         required_skills: ["creativity", "design", "planning"],
         riasec_match: ["A", "I"],
-        industry: ["media", "startup"],
+        industry: ["creative_design", "media_entertainment"],
         description: "게임의 규칙, 스토리, 캐릭터 등을 기획하고 디자인해요",
-        growth_outlook: "보통",
-        avg_salary: "3200-6000만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 4,
@@ -735,10 +686,8 @@ const JOB_DATABASE = {
         category: "미디어/편집",
         required_skills: ["creativity", "technical", "design"],
         riasec_match: ["A", "R"],
-        industry: ["media", "marketing"],
+        industry: ["creative_design", "media_entertainment", "marketing_sales"],
         description: "촬영된 영상을 편집하고 후작업으로 완성도를 높여요",
-        growth_outlook: "높음",
-        avg_salary: "2500-4800만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 4,
@@ -752,10 +701,8 @@ const JOB_DATABASE = {
         category: "미디어/사진",
         required_skills: ["creativity", "technical"],
         riasec_match: ["A", "R"],
-        industry: ["media", "marketing"],
+        industry: ["creative_design", "media_entertainment", "marketing_sales"],
         description: "상업용 사진 촬영부터 예술적 작품까지 다양한 사진 작업을 해요",
-        growth_outlook: "보통",
-        avg_salary: "2200-5000만원",
         work_environment: {
             indoor_work: 2,
             flexible_schedule: 5,
@@ -770,10 +717,8 @@ const JOB_DATABASE = {
         category: "컨설팅/경영",
         required_skills: ["analysis", "communication", "problem_solving"],
         riasec_match: ["E", "I"],
-        industry: ["consulting", "finance"],
+        industry: ["business_strategy", "finance"],
         description: "기업의 문제점을 분석하고 더 나은 경영 방법을 제안해요",
-        growth_outlook: "보통",
-        avg_salary: "4500-8000만원",
         work_environment: {
             indoor_work: 4,
             flexible_schedule: 2,
@@ -787,10 +732,8 @@ const JOB_DATABASE = {
         category: "금융/투자",
         required_skills: ["analysis", "data_analysis", "problem_solving"],
         riasec_match: ["I", "C"],
-        industry: ["finance", "consulting"],
+        industry: ["finance", "business_strategy"],
         description: "기업의 재무 상태를 분석하고 투자 의견을 제시해요",
-        growth_outlook: "높음",
-        avg_salary: "4000-7500만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 2,
@@ -806,8 +749,6 @@ const JOB_DATABASE = {
         riasec_match: ["E", "I"],
         industry: ["finance"],
         description: "기업의 자금 조달이나 인수합병을 도와주는 금융 전문가에요",
-        growth_outlook: "보통",
-        avg_salary: "6000-15000만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 1,
@@ -821,10 +762,8 @@ const JOB_DATABASE = {
         category: "회계/세무",
         required_skills: ["analysis", "planning", "technical"],
         riasec_match: ["C", "I"],
-        industry: ["finance", "consulting"],
+        industry: ["finance", "business_strategy"],
         description: "개인이나 기업의 세금 문제를 해결하고 절세 방안을 제안해요",
-        growth_outlook: "보통",
-        avg_salary: "3500-7000만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 3,
@@ -838,10 +777,8 @@ const JOB_DATABASE = {
         category: "법무/법률",
         required_skills: ["analysis", "communication", "writing"],
         riasec_match: ["I", "S"],
-        industry: ["consulting"],
+        industry: ["business_strategy"],
         description: "법률 문제를 다루고 고객의 권익을 보호하는 일을 해요",
-        growth_outlook: "보통",
-        avg_salary: "4000-12000만원",
         work_environment: {
             indoor_work: 4,
             flexible_schedule: 3,
@@ -855,10 +792,8 @@ const JOB_DATABASE = {
         category: "법무/지식재산",
         required_skills: ["analysis", "technical", "writing"],
         riasec_match: ["I", "C"],
-        industry: ["consulting", "it"],
+        industry: ["business_strategy", "technology"],
         description: "특허, 상표 등 지식재산권을 보호하고 관리하는 일을 해요",
-        growth_outlook: "높음",
-        avg_salary: "4500-9000만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 3,
@@ -873,10 +808,8 @@ const JOB_DATABASE = {
         category: "교육/강의",
         required_skills: ["communication", "planning", "presentation"],
         riasec_match: ["S", "A"],
-        industry: ["education"],
+        industry: ["education_research"],
         description: "학생들에게 지식을 전달하고 성장을 도와주는 일을 해요",
-        growth_outlook: "보통",
-        avg_salary: "2800-4500만원",
         work_environment: {
             indoor_work: 4,
             flexible_schedule: 2,
@@ -890,10 +823,8 @@ const JOB_DATABASE = {
         category: "교육/기획",
         required_skills: ["planning", "creativity", "communication"],
         riasec_match: ["A", "I"],
-        industry: ["education", "startup"],
+        industry: ["education_research"],
         description: "효과적인 교육 프로그램과 커리큘럼을 기획하고 개발해요",
-        growth_outlook: "높음",
-        avg_salary: "3200-5500만원",
         work_environment: {
             indoor_work: 4,
             flexible_schedule: 4,
@@ -907,10 +838,8 @@ const JOB_DATABASE = {
         category: "연구/개발",
         required_skills: ["analysis", "problem_solving", "writing"],
         riasec_match: ["I", "C"],
-        industry: ["education", "it"],
+        industry: ["education_research", "technology"],
         description: "특정 분야의 새로운 지식을 연구하고 발견하는 일을 해요",
-        growth_outlook: "보통",
-        avg_salary: "3500-6500만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 4,
@@ -924,10 +853,8 @@ const JOB_DATABASE = {
         category: "교육/콘텐츠",
         required_skills: ["creativity", "communication", "technical"],
         riasec_match: ["A", "S"],
-        industry: ["education", "startup"],
+        industry: ["education_research"],
         description: "온라인 강의나 교육 자료를 디자인하고 제작해요",
-        growth_outlook: "높음",
-        avg_salary: "3000-5200만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 4,
@@ -942,10 +869,8 @@ const JOB_DATABASE = {
         category: "인사/채용",
         required_skills: ["communication", "planning", "teamwork"],
         riasec_match: ["S", "E"],
-        industry: ["consulting", "manufacturing", "finance"],
+        industry: ["business_strategy", "manufacturing", "finance"],
         description: "사람을 뽑고 교육시키며 회사 조직을 관리하는 일을 해요",
-        growth_outlook: "보통",
-        avg_salary: "3000-5000만원",
         work_environment: {
             indoor_work: 4,
             flexible_schedule: 3,
@@ -959,10 +884,8 @@ const JOB_DATABASE = {
         category: "운영/관리",
         required_skills: ["planning", "leadership", "analysis"],
         riasec_match: ["E", "C"],
-        industry: ["manufacturing", "retail", "consulting"],
+        industry: ["manufacturing", "marketing_sales", "business_strategy"],
         description: "회사의 일상적인 업무 과정을 효율적으로 관리하고 개선해요",
-        growth_outlook: "보통",
-        avg_salary: "3800-6200만원",
         work_environment: {
             indoor_work: 4,
             flexible_schedule: 3,
@@ -976,10 +899,8 @@ const JOB_DATABASE = {
         category: "총무/관리",
         required_skills: ["planning", "communication", "teamwork"],
         riasec_match: ["C", "S"],
-        industry: ["startup", "consulting"],
+        industry: ["business_strategy"],
         description: "사무실 운영과 직원들의 업무 환경을 관리하는 일을 해요",
-        growth_outlook: "보통",
-        avg_salary: "2800-4500만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 3,
@@ -995,10 +916,8 @@ const JOB_DATABASE = {
         category: "미디어/콘텐츠",
         required_skills: ["creativity", "writing", "presentation"],
         riasec_match: ["A", "E"],
-        industry: ["media", "startup", "marketing"],
+        industry: ["media_entertainment", "marketing_sales"],
         description: "유튜브, 인스타그램 등에서 사람들이 좋아할 콘텐츠를 만들어요",
-        growth_outlook: "매우 높음",
-        avg_salary: "2800-6000만원",
         work_environment: {
             indoor_work: 4,
             flexible_schedule: 5,
@@ -1012,10 +931,8 @@ const JOB_DATABASE = {
         category: "미디어/영상",
         required_skills: ["creativity", "presentation", "technical"],
         riasec_match: ["A", "E"],
-        industry: ["media"],
+        industry: ["media_entertainment"],
         description: "유튜브에서 영상을 제작하고 많은 구독자와 소통해요",
-        growth_outlook: "높음",
-        avg_salary: "0-10000만원",
         work_environment: {
             indoor_work: 3,
             flexible_schedule: 5,
@@ -1029,10 +946,8 @@ const JOB_DATABASE = {
         category: "미디어/SNS",
         required_skills: ["creativity", "communication", "presentation"],
         riasec_match: ["A", "E"],
-        industry: ["media", "marketing"],
+        industry: ["media_entertainment", "marketing_sales"],
         description: "SNS에서 팔로워들에게 영향력을 발휘하며 브랜드와 협업해요",
-        growth_outlook: "높음",
-        avg_salary: "1000-8000만원",
         work_environment: {
             indoor_work: 3,
             flexible_schedule: 5,
@@ -1046,10 +961,8 @@ const JOB_DATABASE = {
         category: "마케팅/글쓰기",
         required_skills: ["writing", "creativity", "communication"],
         riasec_match: ["A", "E"],
-        industry: ["marketing", "media"],
+        industry: ["marketing_sales", "media_entertainment"],
         description: "광고나 마케팅에 사용될 매력적인 문구와 글을 써요",
-        growth_outlook: "보통",
-        avg_salary: "3000-5500만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 4,
@@ -1063,10 +976,8 @@ const JOB_DATABASE = {
         category: "미디어/언론",
         required_skills: ["writing", "communication", "analysis"],
         riasec_match: ["I", "A"],
-        industry: ["media"],
+        industry: ["media_entertainment"],
         description: "뉴스를 취재하고 기사를 작성해서 사람들에게 정보를 전달해요",
-        growth_outlook: "보통",
-        avg_salary: "2800-5000만원",
         work_environment: {
             indoor_work: 3,
             flexible_schedule: 2,
@@ -1080,10 +991,8 @@ const JOB_DATABASE = {
         category: "미디어/오디오",
         required_skills: ["creativity", "technical", "communication"],
         riasec_match: ["A", "R"],
-        industry: ["media", "startup"],
+        industry: ["media_entertainment"],
         description: "팟캐스트 프로그램을 기획하고 제작하는 일을 해요",
-        growth_outlook: "높음",
-        avg_salary: "2500-4800만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 4,
@@ -1097,10 +1006,8 @@ const JOB_DATABASE = {
         category: "미디어/라이브",
         required_skills: ["creativity", "technical", "communication"],
         riasec_match: ["A", "E"],
-        industry: ["media", "startup"],
+        industry: ["media_entertainment"],
         description: "라이브 방송 콘텐츠를 기획하고 연출하는 일을 해요",
-        growth_outlook: "매우 높음",
-        avg_salary: "3200-6000만원",
         work_environment: {
             indoor_work: 4,
             flexible_schedule: 2,
@@ -1114,10 +1021,8 @@ const JOB_DATABASE = {
         category: "마케팅/소통",
         required_skills: ["communication", "creativity", "teamwork"],
         riasec_match: ["S", "E"],
-        industry: ["startup", "media", "marketing"],
+        industry: ["media_entertainment", "marketing_sales"],
         description: "온라인 커뮤니티를 관리하고 사용자들과 소통해요",
-        growth_outlook: "높음",
-        avg_salary: "2800-4800만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 4,
@@ -1132,10 +1037,8 @@ const JOB_DATABASE = {
         category: "게임/스포츠",
         required_skills: ["communication", "planning", "teamwork"],
         riasec_match: ["E", "S"],
-        industry: ["media", "startup"],
+        industry: ["media_entertainment"],
         description: "프로게이머나 e스포츠 팀을 관리하고 대회 운영을 도와요",
-        growth_outlook: "매우 높음",
-        avg_salary: "2800-6000만원",
         work_environment: {
             indoor_work: 4,
             flexible_schedule: 3,
@@ -1149,10 +1052,8 @@ const JOB_DATABASE = {
         category: "서비스/동물",
         required_skills: ["communication", "teamwork"],
         riasec_match: ["S", "R"],
-        industry: ["retail"],
+        industry: ["public_social"],
         description: "반려동물을 돌보고 주인들에게 돌봄 서비스를 해드려요",
-        growth_outlook: "높음",
-        avg_salary: "2000-4000만원",
         work_environment: {
             indoor_work: 3,
             flexible_schedule: 4,
@@ -1166,10 +1067,8 @@ const JOB_DATABASE = {
         category: "IT/신기술",
         required_skills: ["coding", "creativity", "technical"],
         riasec_match: ["I", "A"],
-        industry: ["it", "startup", "media"],
+        industry: ["technology", "media_entertainment"],
         description: "가상현실과 증강현실 콘텐츠를 개발하고 구현해요",
-        growth_outlook: "매우 높음",
-        avg_salary: "4000-8000만원",
         work_environment: {
             indoor_work: 5,
             flexible_schedule: 4,
@@ -1183,10 +1082,8 @@ const JOB_DATABASE = {
         category: "컨설팅/환경",
         required_skills: ["analysis", "communication", "planning"],
         riasec_match: ["I", "S"],
-        industry: ["consulting", "manufacturing"],
+        industry: ["business_strategy", "manufacturing"],
         description: "기업의 친환경 경영과 사회적 책임을 컨설팅해요",
-        growth_outlook: "매우 높음",
-        avg_salary: "3500-7000만원",
         work_environment: {
             indoor_work: 4,
             flexible_schedule: 3,
@@ -1200,10 +1097,8 @@ const JOB_DATABASE = {
         category: "기술/촬영",
         required_skills: ["technical", "creativity"],
         riasec_match: ["R", "A"],
-        industry: ["media", "manufacturing"],
+        industry: ["media_entertainment", "manufacturing"],
         description: "드론을 조종해서 항공 촬영이나 배송, 점검 업무를 해요",
-        growth_outlook: "높음",
-        avg_salary: "2800-5500만원",
         work_environment: {
             indoor_work: 2,
             flexible_schedule: 4,
@@ -1331,16 +1226,19 @@ class AssessmentAPI {
                 job.required_skills.forEach(skill => {
                     const skillMapping = {
                         'coding': 'coding',
-                        'analysis': 'data_analysis', 
-                        'technical': 'coding',
-                        'communication': 'presentation',
-                        'creativity': 'design',
-                        'planning': 'project_mgmt',
-                        'problem_solving': 'data_analysis',
-                        'user_research': 'data_analysis',
-                        'leadership': 'presentation',
-                        'teamwork': 'presentation',
-                        'writing': 'writing'
+                        'analysis': 'analysis', 
+                        'technical': 'technical',
+                        'communication': 'communication',
+                        'creativity': 'creativity',
+                        'planning': 'planning',
+                        'problem_solving': 'analysis',
+                        'user_research': 'analysis',
+                        'leadership': 'communication',
+                        'teamwork': 'communication',
+                        'writing': 'writing',
+                        'design': 'design',
+                        'data_analysis': 'data_analysis',
+                        'presentation': 'presentation'
                     };
                     const mappedSkill = skillMapping[skill];
                     if (mappedSkill && responses.step2.skill_confidence[mappedSkill]) {
@@ -1358,23 +1256,84 @@ class AssessmentAPI {
             let understandingBonus = 0;
             if (responses.step2?.job_understanding) {
                 const jobUnderstandingMapping = {
+                    // IT/개발 분야
                     'software_developer': 'software_dev',
-                    'data_analyst': 'data_analyst',
-                    'marketing_manager': 'marketing_manager',
-                    'product_manager': 'product_manager',
-                    'consultant': 'consultant',
-                    'ux_designer': 'designer',
-                    'digital_marketer': 'marketing_manager',
-                    'hr_specialist': 'consultant',
-                    'financial_analyst': 'data_analyst',
-                    'business_analyst': 'data_analyst',
-                    'content_creator': 'marketing_manager',
-                    'sales_manager': 'marketing_manager',
-                    'teacher': 'consultant',
-                    'project_coordinator': 'product_manager',
+                    'frontend_developer': 'software_dev',
+                    'backend_developer': 'software_dev',
+                    'mobile_developer': 'software_dev',
+                    'ai_engineer': 'software_dev',
+                    'devops_engineer': 'software_dev',
+                    'security_specialist': 'software_dev',
+                    'system_admin': 'software_dev',
+                    'blockchain_developer': 'software_dev',
                     'quality_assurance': 'software_dev',
+                    'vr_ar_developer': 'software_dev',
+                    
+                    // 데이터 분야
+                    'data_scientist': 'data_analyst',
+                    'data_analyst': 'data_analyst',
+                    'business_analyst': 'business_analyst',
+                    'financial_analyst': 'financial_analyst',
+                    
+                    // 마케팅 분야
+                    'marketing_manager': 'marketing_manager',
+                    'digital_marketer': 'marketing_manager',
+                    'performance_marketer': 'marketing_manager',
+                    'brand_manager': 'marketing_manager',
+                    'growth_hacker': 'marketing_manager',
+                    'cro_specialist': 'marketing_manager',
+                    'sales_manager': 'marketing_manager',
+                    'account_manager': 'marketing_manager',
+                    'copywriter': 'marketing_manager',
+                    'community_manager': 'marketing_manager',
+                    
+                    // 기획 분야
+                    'product_manager': 'product_manager',
+                    'product_owner': 'product_manager',
+                    'project_manager': 'product_manager',
+                    'scrum_master': 'product_manager',
+                    'service_planner': 'product_manager',
+                    'business_development': 'product_manager',
+                    
+                    // 컨설팅 분야
+                    'consultant': 'consultant',
+                    'hr_specialist': 'consultant',
+                    'operations_manager': 'consultant',
+                    'office_manager': 'consultant',
+                    'sustainability_consultant': 'consultant',
+                    'investment_banker': 'consultant',
+                    'tax_accountant': 'consultant',
+                    'lawyer': 'consultant',
+                    'patent_attorney': 'consultant',
+                    
+                    // 디자인 분야
+                    'ux_designer': 'designer',
                     'graphic_designer': 'designer',
-                    'operations_manager': 'consultant'
+                    'web_designer': 'designer',
+                    'brand_designer': 'designer',
+                    'motion_graphics': 'designer',
+                    'game_designer': 'designer',
+                    'video_editor': 'designer',
+                    'photographer': 'designer',
+                    
+                    // 콘텐츠 분야
+                    'content_creator': 'content_creator',
+                    'youtube_creator': 'content_creator',
+                    'influencer': 'content_creator',
+                    'journalist': 'content_creator',
+                    'podcast_producer': 'content_creator',
+                    'streaming_producer': 'content_creator',
+                    
+                    // 교육 분야
+                    'teacher': 'teacher',
+                    'curriculum_designer': 'teacher',
+                    'researcher': 'teacher',
+                    'instructional_designer': 'teacher',
+                    
+                    // 특수 분야
+                    'esports_manager': 'content_creator',
+                    'pet_care_specialist': 'teacher',
+                    'drone_operator': 'software_dev'
                 };
                 const understandingKey = jobUnderstandingMapping[jobId];
                 if (understandingKey && responses.step2.job_understanding[understandingKey]) {
@@ -1591,7 +1550,8 @@ class AssessmentAPI {
                     title: "이력서 완성 (우선)",
                     description: "3개월 이내 목표이므로 이력서를 즉시 완성하세요.",
                     timeline: "1주일",
-                    priority: "높음"
+                    priority: "높음",
+                    practicalTip: "채용공고 3-5개를 먼저 분석하고, 그에 맞는 키워드를 이력서에 포함하세요."
                 });
             }
         }
@@ -1601,7 +1561,8 @@ class AssessmentAPI {
                 title: "포트폴리오 만들기",
                 description: `${results.topJobs[0]?.title} 분야에 맞는 포트폴리오를 만들어보세요.`,
                 timeline: "1-2개월",
-                priority: "높음"
+                priority: "높음",
+                practicalTip: "질보다 양으로 시작하세요. 작은 프로젝트 3개가 큰 프로젝트 1개보다 나을 수 있습니다."
             });
         }
 
@@ -1653,13 +1614,26 @@ class AssessmentAPI {
                 
                 if (skillNames[skill]) {
                     const methodInfo = learningMethodDetails[learningMethod];
+                    const skillTips = {
+                        'coding': '매일 1시간씩 코딩하는 습관을 만드세요. 하루 놓치면 3일 감을 잃습니다.',
+                        'analysis': '실제 데이터를 구해서 분석해보세요. 캐글이나 공공데이터를 활용하면 좋습니다.',
+                        'communication': '온라인 스터디나 발표 기회를 적극 찾아보세요. 말하기는 연습으로만 늡니다.',
+                        'creativity': '매일 새로운 것을 관찰하고 "왜?"라고 질문하는 습관을 만드세요.',
+                        'planning': '개인 프로젝트부터 시작해서 기획서 작성 연습을 해보세요.',
+                        'technical': '공식 문서 읽기를 습관화하고, 직접 만들어보면서 익히세요.',
+                        'design': '매일 다른 디자인을 분석하고 따라 만들어보세요. 베끼기가 창조의 시작입니다.',
+                        'problem_solving': '어려운 문제를 만나면 작은 단위로 나누어 해결하는 연습을 하세요.',
+                        'user_research': '주변 사람들에게 자주 물어보고 의견을 수집하는 습관을 만드세요.'
+                    };
+                    
                     actionPlan.push({
                         title: `${skillNames[skill]} 향상`,
                         description: `${topJob.title} 직무 필수 역량입니다. ${methodInfo.method}를 통해 ${methodInfo.description}하세요.`,
                         timeline: learningMethod === 'bootcamp' ? '3-6개월' : learningMethod === 'project_based' ? '2-4개월' : '2-3개월',
                         priority: "높음",
                         resources: methodInfo.platforms,
-                        learning_method: methodInfo.method
+                        learning_method: methodInfo.method,
+                        practicalTip: skillTips[skill] || '매일 조금씩이라도 꾸준히 연습하는 것이 가장 중요합니다.'
                     });
                 }
             });
@@ -1671,31 +1645,36 @@ class AssessmentAPI {
                 title: '온라인 학습 효율화 팁',
                 description: '강의 노트 정리, 실습 프로젝트 병행, 학습 일정 관리로 완주율을 높이세요.',
                 timeline: '지속적',
-                priority: '보통'
+                priority: '보통',
+                practicalTip: '2배속 시청보다는 1.25배속으로 듣고 중요한 부분을 반복 학습하세요.'
             },
             'bootcamp': {
                 title: '부트캠프 준비사항',
                 description: '사전 기초 학습, 학습 시간 확보, 동기들과 네트워킹 준비를 하세요.',
                 timeline: '입학 전 1개월',
-                priority: '보통'
+                priority: '보통',
+                practicalTip: '수강 전 해당 분야 기초 용어부터 공부하면 수업 이해도가 크게 높아집니다.'
             },
             'mentoring': {
                 title: '멘토링을 최대한 활용하는 방법',
                 description: '구체적인 질문 준비, 정기적인 피드백 요청, 업계 인사이트 습득에 집중하세요.',
                 timeline: '멘토링 기간 내',
-                priority: '보통'
+                priority: '보통',
+                practicalTip: '막연한 질문보다는 "A와 B 중 어느 것이 나을까요?" 같은 구체적 질문을 준비하세요.'
             },
             'self_study': {
                 title: '독학 성공 전략',
                 description: '학습 계획 수립, 온라인 커뮤니티 참여, 정기적인 진도 점검을 하세요.',
                 timeline: '지속적',
-                priority: '보통'
+                priority: '보통',
+                practicalTip: '하루 1시간이라도 매일 하는 것이 주말에 몰아서 5시간 하는 것보다 효과적입니다.'
             },
             'project_based': {
                 title: '프로젝트 기반 학습 가이드',
                 description: '작은 프로젝트부터 시작, 코드 리뷰 요청, GitHub 포트폴리오 관리를 하세요.',
                 timeline: '각 프로젝트마다',
-                priority: '보통'
+                priority: '보통',
+                practicalTip: '완벽한 프로젝트 1개보다 80% 완성도 프로젝트 3개가 포트폴리오에 더 유리합니다.'
             }
         };
         

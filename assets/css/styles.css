@@ -243,14 +243,23 @@ main {
     background: linear-gradient(135deg, #667eea15, #764ba215);
 }
 
+.option.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
 .option input[type="radio"] {
     margin: 0;
     accent-color: #667eea;
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
+    min-width: 44px;
+    min-height: 44px;
     transform: scale(1);
     flex-shrink: 0;
     cursor: pointer;
+    position: relative;
 }
 
 .option label {
@@ -279,9 +288,13 @@ main {
 .scale-option input[type="radio"] {
     margin-bottom: 0.5rem;
     accent-color: #667eea;
-    width: 18px;
-    height: 18px;
-    transform: scale(1); /* 표준 크기로 설정 */
+    width: 20px;
+    height: 20px;
+    min-width: 44px;
+    min-height: 44px;
+    transform: scale(1);
+    cursor: pointer;
+    position: relative;
 }
 
 .scale-option label {
@@ -390,6 +403,142 @@ main {
 
 .tooltip-body strong {
     color: #2c3e50;
+}
+
+/* Question Tooltip Styles */
+.question-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.question-tooltip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background: #667eea;
+    color: white;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    margin-left: 8px;
+    border: none;
+    font-size: 12px;
+}
+
+.question-tooltip:hover {
+    background: #5a6fd8;
+    transform: scale(1.1);
+}
+
+.question-tooltip svg {
+    width: 12px;
+    height: 12px;
+}
+
+/* Question Tooltip Popup */
+.question-tooltip-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.tooltip-popup-content {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.tooltip-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid #e9ecef;
+    background: #f8f9fa;
+    border-radius: 12px 12px 0 0;
+}
+
+.tooltip-popup-header h4 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.1rem;
+}
+
+.tooltip-popup-close {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #6c757d;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+}
+
+.tooltip-popup-close:hover {
+    background: #e9ecef;
+    color: #495057;
+}
+
+.tooltip-popup-body {
+    padding: 20px;
+}
+
+.tooltip-popup-body p {
+    margin: 0;
+    color: #495057;
+    line-height: 1.5;
+}
+
+/* Option Description Styles */
+.option-title {
+    display: block;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.option-desc {
+    display: block;
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-top: 4px;
+    font-weight: 400;
+    line-height: 1.3;
+}
+
+/* Scale Option Description */
+.scale-label-container {
+    margin-bottom: 8px;
+}
+
+.scale-option-desc {
+    display: block;
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-top: 2px;
+    font-style: italic;
 }
 
 /* Navigation */
@@ -759,9 +908,12 @@ main {
     
     .option input[type="radio"] {
         margin-right: 0.75rem;
-        width: 20px;
-        height: 20px;
-        transform: scale(1); /* 모바일에서 터치하기 쉬운 크기 */
+        width: 24px;
+        height: 24px;
+        min-width: 44px;
+        min-height: 44px;
+        transform: scale(1);
+        padding: 10px; /* 터치 영역 확대 */
     }
     
     .option label {
@@ -788,10 +940,13 @@ main {
     }
     
     .scale-option input[type="radio"] {
-        width: 22px;
-        height: 22px;
-        transform: scale(1); /* 일관된 크기 */
+        width: 24px;
+        height: 24px;
+        min-width: 44px;
+        min-height: 44px;
+        transform: scale(1);
         margin-bottom: 0.25rem;
+        padding: 10px; /* 터치 영역 확대 */
     }
     
     .scale-option label {
@@ -1013,3 +1168,29 @@ main {
         transform: rotate(360deg);
     }
 }
+
+/* 직업 정보 출처 스타일 */
+.data-source {
+    color: #666;
+    font-style: italic;
+    margin-top: 5px;
+    display: block;
+}
+
+/* 실용적인 조언 스타일 */
+.practical-advice {
+    display: block;
+    background: #f0f8ff;
+    padding: 12px;
+    border-radius: 6px;
+    border-left: 4px solid #667eea;
+    color: #2c3e50;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-top: 8px;
+}
+
+.practical-advice strong {
+    color: #667eea;
+}
+
