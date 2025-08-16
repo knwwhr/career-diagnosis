@@ -718,8 +718,41 @@ class AssessmentManager {
             this.showSection('results');
             document.querySelector('.results-container').innerHTML = '<div class="loading">결과를 계산하고 있습니다...</div>';
 
+            // Validate responses completeness
+            console.log('Validating responses:', this.responses);
+            
+            // 기본 단계 존재 여부 확인
+            if (!this.responses.step1 || !this.responses.step2 || !this.responses.step3) {
+                throw new Error('진단이 완료되지 않았습니다. 모든 단계를 완료해주세요.');
+            }
+            
+            // 각 단계별 필수 질문 완료 여부 확인
+            const step1Required = ['values_priorities', 'work_environment', 'personality_riasec', 'educational_background', 'strengths_experience'];
+            const step2Required = ['industry_interest', 'job_understanding', 'skill_confidence'];
+            const step3Required = ['career_timeline', 'preparation_status', 'learning_preference'];
+            
+            const missingStep1 = step1Required.filter(q => !this.responses.step1[q]);
+            const missingStep2 = step2Required.filter(q => !this.responses.step2[q]);
+            const missingStep3 = step3Required.filter(q => !this.responses.step3[q]);
+            
+            if (missingStep1.length > 0) {
+                throw new Error(`1단계 미완료 질문: ${missingStep1.join(', ')}`);
+            }
+            if (missingStep2.length > 0) {
+                throw new Error(`2단계 미완료 질문: ${missingStep2.join(', ')}`);
+            }
+            if (missingStep3.length > 0) {
+                throw new Error(`3단계 미완료 질문: ${missingStep3.join(', ')}`);
+            }
+
             // Calculate results
             const results = await AssessmentAPI.calculateResults(this.responses);
+            console.log('Results from calculateResults:', results);
+            
+            if (!results || !results.riasecScores) {
+                throw new Error('결과 계산에 실패했습니다. RIASEC 점수를 계산할 수 없습니다.');
+            }
+            
             const actionPlan = await AssessmentAPI.generateActionPlan(results, this.responses);
 
             // Display results
@@ -730,7 +763,9 @@ class AssessmentManager {
             this.lastActionPlan = actionPlan;
         } catch (error) {
             console.error('Error calculating results:', error);
-            alert('결과 계산 중 오류가 발생했습니다.');
+            console.error('Error details:', error.message);
+            console.error('Current responses:', this.responses);
+            alert(`결과 계산 중 오류가 발생했습니다: ${error.message}`);
         }
     }
 
@@ -760,7 +795,7 @@ class AssessmentManager {
         `;
 
         // Display profile summary
-        this.displayProfileSummary();
+        this.displayProfileSummary(results);
 
         // Display strengths chart
         this.displayStrengthsChart(results.riasecScores);
@@ -772,7 +807,7 @@ class AssessmentManager {
         this.displayActionPlan(actionPlan);
     }
 
-    displayProfileSummary() {
+    displayProfileSummary(results) {
         const container = document.getElementById('profile-summary');
         const step1 = this.responses.step1 || {};
         
@@ -808,10 +843,15 @@ class AssessmentManager {
             }).join(', ');
         }
 
-        // Get RIASEC scores from the last calculation
-        const results = AssessmentAPI.calculateResults(this.responses);
-        const riasecScores = results.riasecScores;
-        const riasecDisplay = `R:${riasecScores.R} I:${riasecScores.I} A:${riasecScores.A} S:${riasecScores.S} E:${riasecScores.E} C:${riasecScores.C}`;
+        let educationalBackground = 'N/A';
+        if (this.responses.step1?.educational_background) {
+            const educationOption = ASSESSMENT_DATA.step1.questions[3].options.find(opt => opt.id === this.responses.step1.educational_background);
+            educationalBackground = educationOption?.text || this.responses.step1.educational_background;
+        }
+
+        // Get RIASEC scores from passed results
+        const riasecScores = results?.riasecScores || { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
+        const riasecDisplay = `R:${riasecScores.R || 0} I:${riasecScores.I || 0} A:${riasecScores.A || 0} S:${riasecScores.S || 0} E:${riasecScores.E || 0} C:${riasecScores.C || 0}`;
 
         container.innerHTML = `
             <div class="profile-item">
@@ -821,6 +861,10 @@ class AssessmentManager {
             <div class="profile-item">
                 <span class="profile-label">성향 유형</span>
                 <span class="profile-value">${personalityType}</span>
+            </div>
+            <div class="profile-item">
+                <span class="profile-label">전공 계열</span>
+                <span class="profile-value">${educationalBackground}</span>
             </div>
             <div class="profile-item">
                 <span class="profile-label">RIASEC 성향 점수</span>
@@ -886,6 +930,9 @@ class AssessmentManager {
             this.strengthsChart.destroy();
         }
         
+        // RIASEC 점수 안전하게 처리
+        const safeRiasecScores = riasecScores || { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
+        
         // 차트 인스턴스 저장
         this.strengthsChart = new Chart(ctx, {
             type: 'radar',
@@ -894,12 +941,12 @@ class AssessmentManager {
                 datasets: [{
                     label: 'RIASEC 성향 분석',
                     data: [
-                        riasecScores.R,
-                        riasecScores.I, 
-                        riasecScores.A,
-                        riasecScores.S,
-                        riasecScores.E,
-                        riasecScores.C
+                        safeRiasecScores.R || 0,
+                        safeRiasecScores.I || 0, 
+                        safeRiasecScores.A || 0,
+                        safeRiasecScores.S || 0,
+                        safeRiasecScores.E || 0,
+                        safeRiasecScores.C || 0
                     ],
                     backgroundColor: 'rgba(102, 126, 234, 0.2)',
                     borderColor: 'rgba(102, 126, 234, 1)',

@@ -36,7 +36,7 @@ const ASSESSMENT_DATA = {
             {
                 id: "personality_riasec",
                 type: "multiple_choice",
-                question: "이런 일들 중에서 어떤 게 가장 재미있을 것 같나요?",
+                question: "아래 일들 중에서 어떤 게 가장 재미있을 것 같나요?",
                 options: [
                     { id: "hands_on", text: "손으로 뭔가를 만들거나 기계를 다루는 일", riasec: "R", weight: 3 },
                     { id: "research", text: "어려운 문제를 파헤쳐서 해답을 찾는 일", riasec: "I", weight: 3 },
@@ -44,6 +44,20 @@ const ASSESSMENT_DATA = {
                     { id: "helping", text: "사람들을 도와주고 함께 소통하는 일", riasec: "S", weight: 3 },
                     { id: "leadership", text: "앞장서서 팀을 이끌고 사업을 추진하는 일", riasec: "E", weight: 3 },
                     { id: "organizing", text: "복잡한 일들을 체계적으로 정리하고 관리하는 일", riasec: "C", weight: 3 }
+                ]
+            },
+            {
+                id: "educational_background",
+                type: "multiple_choice",
+                question: "전공이나 학과는 무엇인가요? (가장 가까운 것을 선택하세요)",
+                options: [
+                    { id: "engineering", text: "공학계열 (컴퓨터공학, 전기공학, 기계공학 등)", bonus_jobs: ["software_developer", "frontend_developer", "backend_developer", "fullstack_developer", "mobile_developer", "ai_ml_engineer", "devops_engineer", "cloud_engineer"] },
+                    { id: "business", text: "경영/경제계열", bonus_jobs: ["business_developer", "marketing_manager", "consultant", "financial_analyst", "investment_analyst"] },
+                    { id: "design", text: "디자인/예술계열", bonus_jobs: ["ux_ui_designer", "graphic_designer", "brand_designer", "product_designer", "web_designer", "video_editor", "illustrator"] },
+                    { id: "liberal_arts", text: "인문계열", bonus_jobs: ["content_creator", "copywriter", "education_trainer", "pr_specialist", "content_marketer"] },
+                    { id: "science", text: "자연과학계열", bonus_jobs: ["data_scientist", "bio_researcher", "clinical_researcher", "medical_data_analyst"] },
+                    { id: "social_science", text: "사회과학계열", bonus_jobs: ["career_counselor", "consultant", "pr_specialist", "training_coordinator"] },
+                    { id: "other", text: "기타/비전공자", bonus_jobs: [] }
                 ]
             },
             {
@@ -91,7 +105,7 @@ const ASSESSMENT_DATA = {
             {
                 id: "job_understanding",
                 type: "scale",
-                question: "이런 직업들에 대해 얼마나 알고 있나요? (1: 잘 모르겠어요, 5: 잘 알고 있어요)",
+                question: "아래 직업들에 대해 얼마나 알고 있나요? (1: 잘 모르겠어요, 5: 잘 알고 있어요)",
                 options: [
                     { id: "software_dev", text: "개발자", scale: [1, 2, 3, 4, 5] },
                     { id: "data_analyst", text: "데이터 분석가", scale: [1, 2, 3, 4, 5] },
@@ -108,7 +122,7 @@ const ASSESSMENT_DATA = {
             {
                 id: "skill_confidence",
                 type: "scale", 
-                question: "이런 스킬들에 대해 얼마나 자신 있나요? (1: 전혀 자신없어요, 5: 자신있어요)",
+                question: "아래 스킬들에 대해 얼마나 자신 있나요? (1: 전혀 자신없어요, 5: 자신있어요)",
                 options: [
                     { id: "coding", text: "코딩/프로그래밍", scale: [1, 2, 3, 4, 5] },
                     { id: "data_analysis", text: "데이터 분석", scale: [1, 2, 3, 4, 5] },
@@ -1157,6 +1171,7 @@ class AssessmentAPI {
     static clientSideCalculation(responses) {
         // RIASEC scoring
         const riasecScores = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
+        console.log('ClientSideCalculation started with responses:', responses);
         
         // Calculate RIASEC from various responses
         if (responses.step1) {
@@ -1197,10 +1212,12 @@ class AssessmentAPI {
             
             // RIASEC 성향 매칭 (최대 30점)
             let riasecBonus = 0;
-            job.riasec_match.forEach(riasec => {
-                const riasecScore = riasecScores[riasec] || 0;
-                riasecBonus += riasecScore * 2; // 가중치 감소
-            });
+            if (job.riasec_match && Array.isArray(job.riasec_match)) {
+                job.riasec_match.forEach(riasec => {
+                    const riasecScore = riasecScores[riasec] || 0;
+                    riasecBonus += riasecScore * 2; // 가중치 감소
+                });
+            }
             score += Math.min(riasecBonus, 30);
             if (riasecBonus > 0) {
                 explanations.push(`성향 일치도 (+${Math.min(riasecBonus, 30)}점)`);
@@ -1208,7 +1225,7 @@ class AssessmentAPI {
 
             // 관심 산업 분야 매칭 (최대 20점)
             let industryBonus = 0;
-            if (responses.step2?.industry_interest) {
+            if (responses.step2?.industry_interest && job.industry && Array.isArray(job.industry)) {
                 job.industry.forEach(industry => {
                     if (responses.step2.industry_interest.includes(industry)) {
                         industryBonus += 8; // 산업별 8점으로 감소
@@ -1222,7 +1239,7 @@ class AssessmentAPI {
 
             // 스킬 자신감 매칭 (최대 25점)
             let skillBonus = 0;
-            if (responses.step2?.skill_confidence) {
+            if (responses.step2?.skill_confidence && job.required_skills && Array.isArray(job.required_skills)) {
                 job.required_skills.forEach(skill => {
                     const skillMapping = {
                         'coding': 'coding',
@@ -1514,14 +1531,25 @@ class AssessmentAPI {
             }
             score -= experiencePenalty;
 
-            // 최종 점수는 25-95점 범위로 조정 (더 현실적인 분포)
-            const finalScore = Math.max(25, Math.min(score, 95));
+            // 전공 보너스 (최대 10점)
+            let educationBonus = 0;
+            if (responses.step1?.educational_background) {
+                const educationOption = ASSESSMENT_DATA.step1.questions[3].options.find(opt => opt.id === responses.step1.educational_background);
+                if (educationOption?.bonus_jobs?.includes(jobId)) {
+                    educationBonus = 10;
+                    explanations.push(`전공 관련 보너스 (+${educationBonus}점)`);
+                }
+            }
+            score += educationBonus;
+
+            // 최종 점수는 25-105점 범위로 조정 (전공 보너스 포함)
+            const finalScore = Math.max(25, Math.min(score, 105));
             
             jobScores[jobId] = finalScore;
             jobExplanations[jobId] = explanations;
         });
 
-        return {
+        const result = {
             riasecScores,
             jobScores,
             jobExplanations,
@@ -1532,9 +1560,15 @@ class AssessmentAPI {
                     jobId, 
                     score, 
                     explanation: jobExplanations[jobId],
+                    title: JOB_DATABASE[jobId]?.title || jobId,
                     ...JOB_DATABASE[jobId] 
                 }))
+                .filter(job => job.title) // title이 없는 직업 제외
         };
+        
+        console.log('ClientSideCalculation result:', result);
+        console.log('RIASEC scores:', riasecScores);
+        return result;
     }
 
     static async generateActionPlan(results, responses) {
@@ -1570,7 +1604,7 @@ class AssessmentAPI {
         const topJob = results.topJobs[0];
         const learningMethod = responses.step3?.learning_preference || 'online_course';
         
-        if (topJob) {
+        if (topJob && topJob.required_skills && Array.isArray(topJob.required_skills)) {
             topJob.required_skills.forEach(skill => {
                 const skillNames = {
                     'coding': '프로그래밍 스킬',
