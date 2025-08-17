@@ -146,12 +146,12 @@ const ASSESSMENT_DATA = {
             {
                 id: "career_timeline",
                 type: "multiple_choice",
-                question: "언제쯤 첫 직장에 들어가고 싶나요?",
+                question: "언제쯤 취업을 원하시나요?",
                 options: [
                     { id: "3months", text: "빨리 해야 해요 (3개월 안)", urgency: "high" },
                     { id: "6months", text: "6개월 정도", urgency: "medium" },
                     { id: "1year", text: "1년 정도", urgency: "low" },
-                    { id: "flexible", text: "여유롭게 준비하고 싶어요", urgency: "flexible" }
+                    { id: "flexible", text: "아직 정확한 시기를 정하지 못했어요", urgency: "flexible" }
                 ]
             },
             {
@@ -1212,7 +1212,7 @@ class AssessmentAPI {
                 const educationOption = ASSESSMENT_DATA.step1.questions[0].options.find(opt => opt.id === responses.step1.educational_background);
                 if (educationOption?.bonus_jobs?.includes(jobId)) {
                     majorBonus = 5; // 전공 일치시 5점
-                    explanations.push(`전공 일치 보너스 (+${majorBonus}점)`);
+                    explanations.push(`전공적합도 (+${majorBonus}점)`);
                 }
             }
             score = majorBonus;
@@ -1225,9 +1225,10 @@ class AssessmentAPI {
                     riasecBonus += riasecScore * 1.67; // 25점 만점 조정
                 });
             }
-            score += Math.min(riasecBonus, 25);
-            if (riasecBonus > 0) {
-                explanations.push(`성향 일치도 (+${Math.min(riasecBonus, 25)}점)`);
+            const finalRiasecBonus = Math.round(Math.min(riasecBonus, 25));
+            score += finalRiasecBonus;
+            if (finalRiasecBonus > 0) {
+                explanations.push(`성향 일치도 (+${finalRiasecBonus}점)`);
             }
 
             // 관심 산업 분야 매칭 (최대 10점) - 2순위 참고 요소
@@ -1271,9 +1272,10 @@ class AssessmentAPI {
                     }
                 });
             }
-            score += Math.min(skillBonus, 22);
-            if (skillBonus > 0) {
-                explanations.push(`보유 스킬 일치도 (+${Math.min(skillBonus, 22)}점)`);
+            const finalSkillBonus = Math.round(Math.min(skillBonus, 22));
+            score += finalSkillBonus;
+            if (finalSkillBonus > 0) {
+                explanations.push(`보유 스킬 일치도 (+${finalSkillBonus}점)`);
             }
 
             // 직무 이해도 보너스 (최대 15점) - 2순위 참고 요소
@@ -1545,33 +1547,99 @@ class AssessmentAPI {
         const actionPlan = [];
         const urgency = responses.step3?.career_timeline || 'flexible';
         const preparationStatus = responses.step3?.preparation_status || [];
+        const learningMethod = responses.step3?.learning_preference || 'online_course';
+        const topJob = results.topJobs[0];
         
-        // Based on urgency and current preparation
-        if (urgency === 'high' || urgency === '3months') {
+        // 우선순위 시스템: 1순위(최우선) → 2순위(중요) → 3순위(장기)
+        
+        // 특별 케이스: 시기를 정하지 못한 경우 (탐색 중심)
+        if (urgency === 'flexible') {
+            actionPlan.push({
+                title: "진로 탐색 및 자기 이해",
+                description: "다양한 직업과 업계를 탐색하고 자신에게 맞는 방향을 찾아보세요.",
+                timeline: "1-2개월",
+                priority: "1순위",
+                priorityLabel: "🎯 탐색",
+                reason: `아직 정확한 취업 시기를 정하지 못했다고 하셨습니다. 먼저 자신에게 맞는 진로 방향을 명확히 하는 것이 중요합니다.`,
+                practicalTip: "업계별 현직자 인터뷰나 직업 체험 프로그램에 참여해보면 어떨까요? 실제 업무를 경험해보면 방향성을 찾는 데 도움이 될 것 같아요."
+            });
+            
+            actionPlan.push({
+                title: "관심 분야 심화 탐구",
+                description: `${responses.step2?.industry_interest?.[0] || '선택하신 분야'}에 대해 더 깊이 알아보세요.`,
+                timeline: "1개월",
+                priority: "1순위", 
+                priorityLabel: "🎯 탐색",
+                reason: `관심 분야로 선택하신 것들을 실제로 어떤 일인지 구체적으로 알아보는 시간이 필요합니다.`,
+                practicalTip: "해당 분야의 유튜브 채널, 블로그, 커뮤니티를 찾아보면 어떨까요? 실제 업무 경험담을 들어보면 현실적인 감을 잡을 수 있을 것 같아요."
+            });
+            
+            actionPlan.push({
+                title: "구체적인 목표 시기 설정",
+                description: "탐색 결과를 바탕으로 현실적인 취업 목표 시기를 정해보세요.",
+                timeline: "2개월 후",
+                priority: "2순위",
+                priorityLabel: "📋 계획",
+                reason: `진로 방향이 어느 정도 정해지면, 그에 맞는 준비 기간을 역산해서 목표 시기를 정하는 것이 좋습니다.`,
+                practicalTip: "원하는 직업의 평균적인 준비 기간을 조사해보면 어떨까요? 그 정보를 바탕으로 현실적인 계획을 세울 수 있을 것 같아요."
+            });
+        }
+        
+        // 1순위: 긴급성 기반 액션 아이템 (시기가 정해진 경우)
+        else if (urgency === '3months') {
             if (!preparationStatus.includes('resume')) {
                 actionPlan.push({
-                    title: "이력서 완성 (우선)",
+                    title: "이력서 완성",
                     description: "3개월 이내 목표이므로 이력서를 즉시 완성하세요.",
                     timeline: "1주일",
-                    priority: "높음",
+                    priority: "1순위",
+                    priorityLabel: "🚨 긴급",
+                    reason: `취업 희망 시기를 '3개월 안'으로 선택하셨지만, 아직 이력서가 준비되지 않았다고 하셨습니다.`,
                     practicalTip: "채용공고 3-5개를 먼저 분석해보면 어떨까요? 그에 맞는 키워드를 이력서에 포함하면 면접 기회를 늘릴 수 있을 것 같아요."
+                });
+            }
+            
+            if (!preparationStatus.includes('interview_prep')) {
+                actionPlan.push({
+                    title: "면접 준비",
+                    description: "단기 목표 달성을 위해 면접 연습이 필수입니다.",
+                    timeline: "2주일",
+                    priority: "1순위", 
+                    priorityLabel: "🚨 긴급",
+                    reason: `3개월 안에 취업하기를 원하시지만, 면접 연습을 아직 해보지 않았다고 하셨네요.`,
+                    practicalTip: "기본 질문(자기소개, 지원동기)부터 준비하고, 거울 앞에서 연습해보면 어떨까요?"
                 });
             }
         }
 
-        if (!preparationStatus.includes('portfolio') && results.topJobs[0]?.category !== "컨설팅") {
+        // 2순위: 직무별 핵심 준비사항
+        if (!preparationStatus.includes('portfolio') && topJob?.category !== "컨설팅") {
+            const urgencyReason = urgency === '3months' ? '3개월 내 목표이시고, ' : urgency === '6months' ? '6개월 내 목표이시고, ' : '';
             actionPlan.push({
-                title: "포트폴리오 만들기",
-                description: `${results.topJobs[0]?.title} 분야에 맞는 포트폴리오를 만들어보세요.`,
-                timeline: "1-2개월",
-                priority: "높음",
+                title: "포트폴리오 구축",
+                description: `${topJob?.title} 분야에 맞는 포트폴리오를 만들어보세요.`,
+                timeline: urgency === '3months' ? "2주일" : "1-2개월",
+                priority: urgency === '3months' ? "1순위" : "2순위",
+                priorityLabel: urgency === '3months' ? "🚨 긴급" : "⏰ 우선",
+                reason: `${urgencyReason}포트폴리오가 아직 준비되지 않았다고 하셨습니다. ${topJob?.title} 분야는 실무 능력을 보여주는 것이 중요합니다.`,
                 practicalTip: "질보다 양으로 시작해보면 어떨까요? 작은 프로젝트 3개가 큰 프로젝트 1개보다 더 효과적일 것 같아요."
             });
         }
+        
+        if (!preparationStatus.includes('networking')) {
+            const industryInterest = responses.step2?.industry_interest?.[0] || '관심분야';
+            actionPlan.push({
+                title: "네트워킹 활동",
+                description: "업계 전문가들과의 연결고리를 만들어보세요.",
+                timeline: "지속적",
+                priority: "2순위",
+                priorityLabel: "⏰ 우선", 
+                reason: `'${industryInterest}' 분야에 관심을 보이셨지만, 업계 사람들과 아는 사이가 아니라고 하셨습니다.`,
+                practicalTip: "링크드인이나 업계 모임에 참석해보면 어떨까요? 온라인 커뮤니티부터 시작하면 부담스럽지 않을 것 같아요."
+            });
+        }
 
-        // Skill development recommendations (학습 방법 선호도 반영)
-        const topJob = results.topJobs[0];
-        const learningMethod = responses.step3?.learning_preference || 'online_course';
+        // 3순위: 장기적 스킬 개발 (학습 방법 선호도 반영)
         
         if (topJob && topJob.required_skills && Array.isArray(topJob.required_skills)) {
             topJob.required_skills.forEach(skill => {
@@ -1629,11 +1697,31 @@ class AssessmentAPI {
                         'user_research': '주변 사람들에게 자주 물어보고 의견을 수집해보면 어떨까요? 다양한 관점을 접하면 통찰력을 기를 수 있을 것 같아요.'
                     };
                     
+                    // 스킬 자신감 확인
+                    const skillConfidenceMapping = {
+                        'coding': 'coding',
+                        'analysis': 'analysis', 
+                        'technical': 'technical',
+                        'communication': 'communication',
+                        'creativity': 'creativity',
+                        'planning': 'planning',
+                        'design': 'design',
+                        'writing': 'writing'
+                    };
+                    
+                    const userSkillLevel = responses.step2?.skill_confidence?.[skillConfidenceMapping[skill]] || 1;
+                    const learningMethodText = learningMethod === 'online_course' ? '온라인 강의' : 
+                                            learningMethod === 'bootcamp' ? '부트캠프' :
+                                            learningMethod === 'mentoring' ? '멘토링' :
+                                            learningMethod === 'self_study' ? '독학/책' : '실전 프로젝트';
+                    
                     actionPlan.push({
                         title: `${skillNames[skill]} 향상`,
                         description: `${topJob.title} 직무 필수 역량입니다. ${methodInfo.method}을 통해 ${methodInfo.description}하세요.`,
                         timeline: learningMethod === 'bootcamp' ? '3-6개월' : learningMethod === 'project_based' ? '2-4개월' : '2-3개월',
-                        priority: "높음",
+                        priority: "3순위",
+                        priorityLabel: "👀 관심",
+                        reason: `${topJob.title}에 필요한 ${skillNames[skill]}에 대해 자신감이 ${userSkillLevel}점이라고 하셨고, 학습방법으로 '${learningMethodText}'를 선호한다고 하셨습니다.`,
                         resources: methodInfo.platforms,
                         learning_method: methodInfo.method,
                         practicalTip: skillTips[skill] || '매일 조금씩이라도 꾸준히 연습해보면 어떨까요? 작은 노력의 누적이 큰 변화를 만들 수 있을 것 같아요.'
@@ -1648,35 +1736,45 @@ class AssessmentAPI {
                 title: '온라인 학습 효율화 팁',
                 description: '강의 노트 정리, 실습 프로젝트 병행, 학습 일정 관리로 완주율을 높이세요.',
                 timeline: '지속적',
-                priority: '보통',
+                priority: '3순위',
+                priorityLabel: '👀 관심',
+                reason: `학습 방법으로 '온라인 강의'를 선호한다고 하셨습니다. 온라인 학습의 효과를 극대화하기 위한 가이드입니다.`,
                 practicalTip: '2배속 시청보다는 1.25배속으로 듣고 중요한 부분을 반복 학습하세요.'
             },
             'bootcamp': {
                 title: '부트캠프 준비사항',
                 description: '사전 기초 학습, 학습 시간 확보, 동기들과 네트워킹 준비를 하세요.',
                 timeline: '입학 전 1개월',
-                priority: '보통',
+                priority: '3순위',
+                priorityLabel: '👀 관심',
+                reason: `학습 방법으로 '부트캠프'를 선호한다고 하셨습니다. 부트캠프 수강 효과를 극대화하기 위한 준비사항입니다.`,
                 practicalTip: '수강 전 해당 분야 기초 용어부터 공부하면 수업 이해도가 크게 높아집니다.'
             },
             'mentoring': {
                 title: '멘토링을 최대한 활용하는 방법',
                 description: '구체적인 질문 준비, 정기적인 피드백 요청, 업계 인사이트 습득에 집중하세요.',
                 timeline: '멘토링 기간 내',
-                priority: '보통',
+                priority: '3순위',
+                priorityLabel: '👀 관심',
+                reason: `학습 방법으로 '멘토링'을 선호한다고 하셨습니다. 멘토링의 효과를 극대화하기 위한 활용법입니다.`,
                 practicalTip: '막연한 질문보다는 "A와 B 중 어느 것이 나을까요?" 같은 구체적 질문을 준비하세요.'
             },
             'self_study': {
                 title: '독학 성공 전략',
                 description: '학습 계획 수립, 온라인 커뮤니티 참여, 정기적인 진도 점검을 하세요.',
                 timeline: '지속적',
-                priority: '보통',
+                priority: '3순위',
+                priorityLabel: '👀 관심',
+                reason: `학습 방법으로 '독학/책'을 선호한다고 하셨습니다. 독학의 효과를 극대화하기 위한 전략입니다.`,
                 practicalTip: '하루 1시간이라도 매일 하는 것이 주말에 몰아서 5시간 하는 것보다 효과적입니다.'
             },
             'project_based': {
                 title: '프로젝트 기반 학습 가이드',
                 description: '작은 프로젝트부터 시작, 코드 리뷰 요청, GitHub 포트폴리오를 관리하세요.',
                 timeline: '각 프로젝트마다',
-                priority: '보통',
+                priority: '3순위',
+                priorityLabel: '👀 관심',
+                reason: `학습 방법으로 '실전 프로젝트'를 선호한다고 하셨습니다. 프로젝트 기반 학습의 효과를 극대화하기 위한 가이드입니다.`,
                 practicalTip: '완벽한 프로젝트 1개보다 80% 완성도 프로젝트 3개가 포트폴리오에 더 좋을 것 같아요.'
             }
         };
@@ -1684,6 +1782,10 @@ class AssessmentAPI {
         if (generalLearningAdvice[learningMethod]) {
             actionPlan.push(generalLearningAdvice[learningMethod]);
         }
+
+        // 우선순위별 정렬: 1순위 → 2순위 → 3순위 → 기타
+        const priorityOrder = { '1순위': 1, '2순위': 2, '3순위': 3, '높음': 4, '보통': 5 };
+        actionPlan.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
 
         return actionPlan;
     }

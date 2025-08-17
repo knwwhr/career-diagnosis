@@ -539,7 +539,7 @@ class AssessmentManager {
             <div class="popup-content completion-popup">
                 <div class="popup-header">
                     <h3>🎉 ${stepNames[stepNum]}률 ${progress}%!</h3>
-                    <div class="progress-circle">
+                    <div class="completion-progress-circle">
                         <span class="progress-text">${progress}%</span>
                     </div>
                     <p>잘하고 있어요! 계속 진행해볼까요?</p>
@@ -686,7 +686,7 @@ class AssessmentManager {
         const nextBtn = document.getElementById(`step${stepNum}-next`);
         
         if (prevBtn) {
-            prevBtn.disabled = stepNum === 1;
+            prevBtn.disabled = false; // 1단계에서도 랜딩페이지로 돌아갈 수 있음
         }
         
         if (nextBtn) {
@@ -715,9 +715,11 @@ class AssessmentManager {
 
     async calculateAndShowResults() {
         try {
-            // Show loading state
-            this.showSection('results');
-            document.querySelector('.results-container').innerHTML = '<div class="loading">결과를 계산하고 있습니다...</div>';
+            // Show analysis loading screen first
+            this.showAnalysisLoading();
+            
+            // Simulate analysis steps with progress
+            await this.performAnalysisSteps();
 
             // Validate responses completeness - 매우 관대한 검증
             console.log('Validating responses:', this.responses);
@@ -758,7 +760,8 @@ class AssessmentManager {
             
             const actionPlan = await AssessmentAPI.generateActionPlan(results, this.responses);
 
-            // Display results
+            // Show results section and display results
+            this.showSection('results');
             this.displayResults(results, actionPlan);
             
             // PDF 다운로드를 위해 결과 저장
@@ -770,8 +773,96 @@ class AssessmentManager {
             console.error('Current responses:', this.responses);
             
             // Hide loading spinner and show custom error popup
+            this.showSection('results');
             this.hideLoadingAndShowError(error.message);
         }
+    }
+
+    showAnalysisLoading() {
+        // Show analysis loading section
+        this.showSection('analysis-loading');
+        
+        // Reset all steps to initial state
+        document.querySelectorAll('.analysis-step').forEach(step => {
+            step.classList.remove('active', 'completed');
+        });
+        
+        // Reset progress
+        this.updateProgress(0);
+    }
+
+    async performAnalysisSteps() {
+        const steps = [
+            { id: 'step-riasec', duration: 1200, progress: 25 },
+            { id: 'step-matching', duration: 1500, progress: 50 },
+            { id: 'step-scoring', duration: 1000, progress: 75 },
+            { id: 'step-recommendations', duration: 1300, progress: 100 }
+        ];
+
+        for (let i = 0; i < steps.length; i++) {
+            const step = steps[i];
+            
+            // Activate current step
+            const stepElement = document.getElementById(step.id);
+            stepElement.classList.add('active');
+            
+            // Update progress gradually
+            await this.animateProgress(step.progress, step.duration);
+            
+            // Complete current step
+            stepElement.classList.remove('active');
+            stepElement.classList.add('completed');
+            stepElement.querySelector('.step-status').textContent = '';
+            
+            // Small delay between steps
+            if (i < steps.length - 1) {
+                await this.delay(200);
+            }
+        }
+        
+        // Final completion delay
+        await this.delay(500);
+    }
+
+    async animateProgress(targetProgress, duration) {
+        return new Promise(resolve => {
+            const startProgress = parseInt(document.querySelector('.progress-text-simple').textContent) || 0;
+            const progressDiff = targetProgress - startProgress;
+            const startTime = performance.now();
+
+            const animate = (currentTime) => {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                const currentProgress = Math.round(startProgress + (progressDiff * progress));
+                this.updateProgress(currentProgress);
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    resolve();
+                }
+            };
+            
+            requestAnimationFrame(animate);
+        });
+    }
+
+    updateProgress(percentage) {
+        const progressText = document.querySelector('.progress-text-simple');
+        const progressFill = document.querySelector('.progress-fill-simple');
+        
+        if (progressText) {
+            progressText.textContent = `${percentage}%`;
+        }
+        
+        if (progressFill) {
+            progressFill.style.width = `${percentage}%`;
+        }
+    }
+
+    delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     displayResults(results, actionPlan) {
@@ -892,6 +983,22 @@ class AssessmentManager {
             personalityDescription = typeMapping[step1.personality_riasec] || '';
         }
 
+        // 성향과 강점 차이 분석
+        const dominantStrength = this.getDominantRIASEC(riasecScores);
+        const selectedPersonality = step1.personality_riasec;
+        
+        const personalityTypeMapping = {
+            'hands_on': 'R',
+            'research': 'I', 
+            'creative': 'A',
+            'helping': 'S',
+            'leadership': 'E',
+            'organizing': 'C'
+        };
+        
+        const selectedPersonalityType = personalityTypeMapping[selectedPersonality];
+        const showDifferenceExplanation = selectedPersonalityType && dominantStrength && selectedPersonalityType !== dominantStrength;
+
         container.innerHTML = `
             <div class="profile-item">
                 <span class="profile-label">핵심 가치</span>
@@ -911,6 +1018,19 @@ class AssessmentManager {
                 <span class="profile-label">관심 분야</span>
                 <span class="profile-value">${topIndustries}</span>
             </div>
+            ${showDifferenceExplanation ? `
+            <div class="personality-difference-explanation">
+                <div class="explanation-header">
+                    <span class="explanation-icon">💡</span>
+                    <span class="explanation-title">성향과 강점이 다른 이유</span>
+                </div>
+                <div class="explanation-content">
+                    개인 성향은 <strong>"좋아하는 활동"</strong>을, 강점 분석은 <strong>"실제 잘하는 역량"</strong>을 보여줍니다. 
+                    이 둘이 다른 것은 매우 자연스러운 현상으로, 많은 사람들이 선호하는 것과 뛰어난 것이 다릅니다. 
+                    이는 더 넓은 직업 선택권과 발전 가능성을 의미합니다.
+                </div>
+            </div>
+            ` : ''}
         `;
         
         // Add global function for personality tooltip
@@ -1065,10 +1185,50 @@ class AssessmentManager {
             return;
         }
 
+        // Get priority colors for visual distinction
+        const getPriorityColor = (priorityLabel) => {
+            switch(priorityLabel) {
+                case '🚨 긴급': return '#ff3838';        // Urgent Red
+                case '⏰ 우선': return '#ff6b6b';        // Priority Orange-Red  
+                case '👀 관심': return '#4834d4';        // Interest Blue
+                case '🎯 탐색': return '#686de0';        // Exploration Purple
+                case '📋 계획': return '#30336b';        // Planning Dark Blue
+                default: return '#747d8c';              // Gray
+            }
+        };
+
+        const getPriorityDescription = (priorityLabel) => {
+            switch(priorityLabel) {
+                case '🚨 긴급': return '즉시 착수하세요';
+                case '⏰ 우선': return '빠른 시일 내 진행';  
+                case '👀 관심': return '관심을 가지고 준비';
+                case '🎯 탐색': return '탐색하며 시작';
+                case '📋 계획': return '계획 수립 단계';
+                default: return '차근차근 준비';
+            }
+        };
+
         container.innerHTML = actionPlan.map(action => `
             <div class="action-item">
-                <div class="action-title">${action.title}</div>
+                <div class="action-header">
+                    <div class="action-title">${action.title}</div>
+                    ${action.priorityLabel ? `
+                        <div class="action-priority" style="background-color: ${getPriorityColor(action.priorityLabel)}; color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: 500;">
+                            ${action.priorityLabel}
+                        </div>
+                        <div class="priority-description" style="color: #666; font-size: 12px; margin-top: 4px;">
+                            ${getPriorityDescription(action.priorityLabel)}
+                        </div>
+                    ` : ''}
+                </div>
                 <div class="action-description">${action.description}</div>
+                ${action.reason ? `
+                    <div class="action-reason">
+                        <span style="color: #666; font-size: 14px;">
+                            📌 <strong>왜 중요한가요?</strong> ${action.reason}
+                        </span>
+                    </div>
+                ` : ''}
                 <div class="action-link">
                     <span class="practical-advice">
                         💡 <strong>실행 팁:</strong> ${action.practicalTip || '단계별로 차근차근 진행하되, 완벽함보다는 꾸준함을 목표로 하세요.'}
@@ -1377,6 +1537,22 @@ class AssessmentManager {
                 popup.remove();
             }
         });
+    }
+
+    getDominantRIASEC(riasecScores) {
+        if (!riasecScores) return null;
+        
+        let maxScore = -1;
+        let dominantType = null;
+        
+        Object.entries(riasecScores).forEach(([type, score]) => {
+            if (score > maxScore) {
+                maxScore = score;
+                dominantType = type;
+            }
+        });
+        
+        return dominantType;
     }
 }
 
