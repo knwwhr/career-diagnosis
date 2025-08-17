@@ -866,7 +866,16 @@
     display: block;
     font-weight: 600;
     color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.scale-item-desc {
+    display: block;
+    font-size: 0.85rem;
+    color: #7f8c8d;
     margin-bottom: 1rem;
+    line-height: 1.4;
+    font-style: italic;
 }
 
 /* Enhanced Ranking Options */

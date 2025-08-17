@@ -203,6 +203,7 @@ class AssessmentManager {
             <div class="scale-question">
                 <div class="scale-label-container">
                     <label class="scale-label">${option.text}</label>
+                    ${option.desc ? `<span class="scale-item-desc">${option.desc}</span>` : ''}
                 </div>
                 <div class="scale-rating">
                     ${option.scale.map(value => `
@@ -718,32 +719,34 @@ class AssessmentManager {
             this.showSection('results');
             document.querySelector('.results-container').innerHTML = '<div class="loading">결과를 계산하고 있습니다...</div>';
 
-            // Validate responses completeness
+            // Validate responses completeness - 매우 관대한 검증
             console.log('Validating responses:', this.responses);
             
-            // 기본 단계 존재 여부 확인
-            if (!this.responses.step1 || !this.responses.step2 || !this.responses.step3) {
-                throw new Error('진단이 완료되지 않았습니다. 모든 단계를 완료해주세요.');
+            // 전체 응답 객체가 있는지 확인
+            if (!this.responses || typeof this.responses !== 'object') {
+                console.error('No responses object found');
+                throw new Error('진단 데이터를 찾을 수 없습니다. 다시 진단해주세요.');
             }
             
-            // 각 단계별 필수 질문 완료 여부 확인
-            const step1Required = ['values_priorities', 'work_environment', 'personality_riasec', 'educational_background', 'strengths_experience'];
-            const step2Required = ['industry_interest', 'job_understanding', 'skill_confidence'];
-            const step3Required = ['career_timeline', 'preparation_status', 'learning_preference'];
+            // 극도로 관대한 검증 - 최소한의 데이터만 있으면 통과
+            const hasAnyData = this.responses && (
+                (this.responses.step1 && Object.keys(this.responses.step1).length > 0) ||
+                (this.responses.step2 && Object.keys(this.responses.step2).length > 0) ||  
+                (this.responses.step3 && Object.keys(this.responses.step3).length > 0)
+            );
             
-            const missingStep1 = step1Required.filter(q => !this.responses.step1[q]);
-            const missingStep2 = step2Required.filter(q => !this.responses.step2[q]);
-            const missingStep3 = step3Required.filter(q => !this.responses.step3[q]);
+            if (!hasAnyData) {
+                console.error('No response data found at all');
+                throw new Error('진단 응답이 저장되지 않았습니다. 다시 진단해주세요.');
+            }
             
-            if (missingStep1.length > 0) {
-                throw new Error(`1단계 미완료 질문: ${missingStep1.join(', ')}`);
+            // 추가 검증: 최소한 1단계는 있어야 함 (RIASEC 계산을 위해)
+            if (!this.responses.step1 || Object.keys(this.responses.step1).length === 0) {
+                console.error('Step 1 data missing - required for RIASEC calculation');
+                throw new Error('1단계 데이터가 없습니다. 1단계부터 다시 진행해주세요.');
             }
-            if (missingStep2.length > 0) {
-                throw new Error(`2단계 미완료 질문: ${missingStep2.join(', ')}`);
-            }
-            if (missingStep3.length > 0) {
-                throw new Error(`3단계 미완료 질문: ${missingStep3.join(', ')}`);
-            }
+            
+            console.log('Validation passed. Proceeding with calculation...');
 
             // Calculate results
             const results = await AssessmentAPI.calculateResults(this.responses);
@@ -765,7 +768,9 @@ class AssessmentManager {
             console.error('Error calculating results:', error);
             console.error('Error details:', error.message);
             console.error('Current responses:', this.responses);
-            alert(`결과 계산 중 오류가 발생했습니다: ${error.message}`);
+            
+            // Hide loading spinner and show custom error popup
+            this.hideLoadingAndShowError(error.message);
         }
     }
 
@@ -789,7 +794,7 @@ class AssessmentManager {
                 <div id="job-recommendations"></div>
             </div>
             <div class="result-card">
-                <h3>실행 계획</h3>
+                <h3>취업 준비 가이드</h3>
                 <div id="action-plan"></div>
             </div>
         `;
@@ -814,24 +819,44 @@ class AssessmentManager {
         let topValues = 'N/A';
         if (step1.values_priorities) {
             topValues = step1.values_priorities.slice(0, 3).map(valueId => {
-                const option = ASSESSMENT_DATA.step1.questions[0].options.find(opt => opt.id === valueId);
+                const option = ASSESSMENT_DATA.step1.questions[1].options.find(opt => opt.id === valueId);
                 return option?.text || valueId;
             }).join(', ');
         }
 
         let personalityType = 'N/A';
         if (step1.personality_riasec) {
-            const personalityOption = ASSESSMENT_DATA.step1.questions[2].options.find(opt => opt.id === step1.personality_riasec);
+            const personalityOption = ASSESSMENT_DATA.step1.questions[3].options.find(opt => opt.id === step1.personality_riasec);
             if (personalityOption) {
                 const typeMapping = {
-                    'hands_on': 'hands_on (현실형)',
-                    'research': 'research (탐구형)',
-                    'creative': 'creative (예술형)',
-                    'helping': 'helping (사회형)',
-                    'leadership': 'leadership (진취형)',
-                    'organizing': 'organizing (관습형)'
+                    'hands_on': {
+                        name: '현실형 (Realistic)',
+                        description: '실무적이고 체계적인 성향. 손으로 뭔가를 만들거나 기계를 다루는 일을 선호합니다.'
+                    },
+                    'research': {
+                        name: '탐구형 (Investigative)', 
+                        description: '분석적이고 논리적인 성향. 어려운 문제를 파헤쳐서 해답을 찾는 일을 좋아합니다.'
+                    },
+                    'creative': {
+                        name: '예술형 (Artistic)',
+                        description: '창의적이고 표현적인 성향. 새로운 아이디어로 창의적인 작품을 만드는 일을 즐깁니다.'
+                    },
+                    'helping': {
+                        name: '사회형 (Social)',
+                        description: '협력적이고 친화적인 성향. 사람들을 도와주고 함께 소통하는 일에서 보람을 느낍니다.'
+                    },
+                    'leadership': {
+                        name: '진취형 (Enterprising)',
+                        description: '리더십이 강하고 설득력 있는 성향. 앞장서서 팀을 이끌고 사업을 추진하는 일을 좋아합니다.'
+                    },
+                    'organizing': {
+                        name: '관습형 (Conventional)',
+                        description: '체계적이고 신중한 성향. 복잡한 일들을 체계적으로 정리하고 관리하는 일을 잘합니다.'
+                    }
                 };
-                personalityType = typeMapping[step1.personality_riasec] || personalityOption.text;
+                
+                const typeInfo = typeMapping[step1.personality_riasec];
+                personalityType = typeInfo ? typeInfo.name : personalityOption.text;
             }
         }
 
@@ -845,7 +870,7 @@ class AssessmentManager {
 
         let educationalBackground = 'N/A';
         if (this.responses.step1?.educational_background) {
-            const educationOption = ASSESSMENT_DATA.step1.questions[3].options.find(opt => opt.id === this.responses.step1.educational_background);
+            const educationOption = ASSESSMENT_DATA.step1.questions[0].options.find(opt => opt.id === this.responses.step1.educational_background);
             educationalBackground = educationOption?.text || this.responses.step1.educational_background;
         }
 
@@ -853,13 +878,29 @@ class AssessmentManager {
         const riasecScores = results?.riasecScores || { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
         const riasecDisplay = `R:${riasecScores.R || 0} I:${riasecScores.I || 0} A:${riasecScores.A || 0} S:${riasecScores.S || 0} E:${riasecScores.E || 0} C:${riasecScores.C || 0}`;
 
+        // Get personality description for tooltip
+        let personalityDescription = '';
+        if (step1.personality_riasec) {
+            const typeMapping = {
+                'hands_on': '실무적이고 체계적인 성향. 손으로 뭔가를 만들거나 기계를 다루는 일을 선호합니다.',
+                'research': '분석적이고 논리적인 성향. 어려운 문제를 파헤쳐서 해답을 찾는 일을 좋아합니다.',
+                'creative': '창의적이고 표현적인 성향. 새로운 아이디어로 창의적인 작품을 만드는 일을 즐깁니다.',
+                'helping': '협력적이고 친화적인 성향. 사람들을 도와주고 함께 소통하는 일에서 보람을 느낍니다.',
+                'leadership': '리더십이 강하고 설득력 있는 성향. 앞장서서 팀을 이끌고 사업을 추진하는 일을 좋아합니다.',
+                'organizing': '체계적이고 신중한 성향. 복잡한 일들을 체계적으로 정리하고 관리하는 일을 잘합니다.'
+            };
+            personalityDescription = typeMapping[step1.personality_riasec] || '';
+        }
+
         container.innerHTML = `
             <div class="profile-item">
                 <span class="profile-label">핵심 가치</span>
                 <span class="profile-value">${topValues}</span>
             </div>
             <div class="profile-item">
-                <span class="profile-label">성향 유형</span>
+                <span class="profile-label">성향 유형
+                    ${personalityDescription ? `<span class="info-tooltip" onclick="showPersonalityTooltip('${personalityDescription}')">?</span>` : ''}
+                </span>
                 <span class="profile-value">${personalityType}</span>
             </div>
             <div class="profile-item">
@@ -867,14 +908,136 @@ class AssessmentManager {
                 <span class="profile-value">${educationalBackground}</span>
             </div>
             <div class="profile-item">
-                <span class="profile-label">RIASEC 성향 점수</span>
-                <span class="profile-value">${riasecDisplay}</span>
-            </div>
-            <div class="profile-item">
                 <span class="profile-label">관심 분야</span>
                 <span class="profile-value">${topIndustries}</span>
             </div>
         `;
+        
+        // Add global function for personality tooltip
+        if (!window.showPersonalityTooltip) {
+            window.showPersonalityTooltip = function(description) {
+                // Get the selected personality type for more detailed explanation
+                const selectedType = step1.personality_riasec;
+                const detailedTypeInfo = {
+                    'hands_on': {
+                        name: '현실형 (Realistic)',
+                        mainDesc: '실무적이고 체계적인 성향으로, 손으로 뭔가를 만들거나 기계를 다루는 일을 선호합니다.',
+                        characteristics: ['실용적이고 현실적', '도구나 기계 다루기를 좋아함', '체계적이고 안정적인 환경 선호', '명확한 결과가 나오는 일을 좋아함'],
+                        suitableJobs: '개발자, 엔지니어, 제조업, 건축가, 정비사',
+                        workStyle: '정확하고 체계적으로 일하며, 실무 중심의 업무를 선호합니다.'
+                    },
+                    'research': {
+                        name: '탐구형 (Investigative)',
+                        mainDesc: '분석적이고 논리적인 성향으로, 어려운 문제를 파헤쳐서 해답을 찾는 일을 좋아합니다.',
+                        characteristics: ['논리적이고 분석적 사고', '복잡한 문제 해결을 즐김', '지적 호기심이 강함', '독립적으로 일하는 것을 선호'],
+                        suitableJobs: '연구원, 데이터 사이언티스트, 분석가, 의사, 과학자',
+                        workStyle: '깊이 있는 분석과 연구를 통해 문제를 해결하며, 전문성을 중시합니다.'
+                    },
+                    'creative': {
+                        name: '예술형 (Artistic)',
+                        mainDesc: '창의적이고 표현적인 성향으로, 새로운 아이디어로 창의적인 작품을 만드는 일을 즐깁니다.',
+                        characteristics: ['창의성과 상상력이 풍부', '예술적 표현을 좋아함', '독창적이고 혁신적', '자유로운 환경에서 일하기를 선호'],
+                        suitableJobs: '디자이너, 작가, 예술가, 콘텐츠 크리에이터, 광고 기획자',
+                        workStyle: '자유롭고 창의적인 환경에서 새로운 아이디어를 구현하는 일을 좋아합니다.'
+                    },
+                    'helping': {
+                        name: '사회형 (Social)',
+                        mainDesc: '협력적이고 친화적인 성향으로, 사람들을 도와주고 함께 소통하는 일에서 보람을 느낍니다.',
+                        characteristics: ['사람과의 관계를 중시', '협력적이고 배려심이 많음', '소통과 상호작용을 즐김', '다른 사람을 돕는 일에 보람을 느낌'],
+                        suitableJobs: '교사, 상담사, 간호사, 사회복지사, 인사담당자',
+                        workStyle: '팀워크를 중시하며, 사람들과 협력하여 공동의 목표를 달성하는 일을 선호합니다.'
+                    },
+                    'leadership': {
+                        name: '진취형 (Enterprising)',
+                        mainDesc: '리더십이 강하고 설득력 있는 성향으로, 앞장서서 팀을 이끌고 사업을 추진하는 일을 좋아합니다.',
+                        characteristics: ['리더십과 추진력이 강함', '목표 달성에 대한 의지가 강함', '경쟁적이고 도전적', '설득과 영향력 행사를 잘함'],
+                        suitableJobs: '경영자, 영업담당자, 마케터, 기업가, 컨설턴트',
+                        workStyle: '목표를 설정하고 이를 달성하기 위해 적극적으로 행동하며, 리더십을 발휘합니다.'
+                    },
+                    'organizing': {
+                        name: '관습형 (Conventional)',
+                        mainDesc: '체계적이고 신중한 성향으로, 복잡한 일들을 체계적으로 정리하고 관리하는 일을 잘합니다.',
+                        characteristics: ['규칙과 절차를 중시', '정확성과 세심함', '안정적이고 예측 가능한 환경 선호', '체계적이고 조직적'],
+                        suitableJobs: '회계사, 사무관리자, 은행원, 세무사, 행정직',
+                        workStyle: '정확하고 체계적으로 업무를 처리하며, 안정적인 환경에서 일하는 것을 선호합니다.'
+                    }
+                };
+
+                const typeDetail = detailedTypeInfo[selectedType];
+                const tooltip = document.createElement('div');
+                tooltip.className = 'tooltip-overlay';
+                tooltip.innerHTML = `
+                    <div class="tooltip-content personality-tooltip">
+                        <div class="tooltip-header">
+                            <h3>성향 유형 상세 분석</h3>
+                            <button class="tooltip-close" onclick="this.closest('.tooltip-overlay').remove()">×</button>
+                        </div>
+                        <div class="tooltip-body">
+                            <div class="theory-background">
+                                <h4>📚 이론적 배경</h4>
+                                <p><strong>홀랜드 RIASEC 이론</strong>은 심리학자 존 홀랜드(John Holland)가 1973년에 개발한 직업 선택 이론입니다.<br>
+                                개인의 성격과 흥미를 6가지 유형으로 분류하여, 각자에게 맞는 직업 환경을 찾도록 도와줍니다.</p>
+                            </div>
+                            
+                            ${typeDetail ? `
+                            <div class="selected-type-detail">
+                                <h4>🎯 당신의 성향: ${typeDetail.name}</h4>
+                                <p class="main-description">${typeDetail.mainDesc}</p>
+                                
+                                <div class="characteristics-section">
+                                    <h5>✨ 주요 특성</h5>
+                                    <ul>
+                                        ${typeDetail.characteristics.map(char => `<li>${char}</li>`).join('')}
+                                    </ul>
+                                </div>
+                                
+                                <div class="jobs-section">
+                                    <h5>💼 적합한 직업</h5>
+                                    <p>${typeDetail.suitableJobs}</p>
+                                </div>
+                                
+                                <div class="workstyle-section">
+                                    <h5>🎨 업무 스타일</h5>
+                                    <p>${typeDetail.workStyle}</p>
+                                </div>
+                            </div>
+                            ` : ''}
+                            
+                            <div class="riasec-overview">
+                                <h4>🔍 RIASEC 6가지 성향 유형</h4>
+                                <div class="types-grid">
+                                    <div class="type-item"><strong>R(현실형)</strong>: 실무적, 체계적</div>
+                                    <div class="type-item"><strong>I(탐구형)</strong>: 분석적, 논리적</div>
+                                    <div class="type-item"><strong>A(예술형)</strong>: 창의적, 표현적</div>
+                                    <div class="type-item"><strong>S(사회형)</strong>: 협력적, 친화적</div>
+                                    <div class="type-item"><strong>E(진취형)</strong>: 리더십, 추진력</div>
+                                    <div class="type-item"><strong>C(관습형)</strong>: 체계적, 신중함</div>
+                                </div>
+                                <p class="note"><small>💡 대부분의 사람들은 여러 성향이 혼합되어 있으며, 아래 차트에서 전체적인 성향 패턴을 확인할 수 있습니다.</small></p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(tooltip);
+                
+                // Close on background click
+                tooltip.addEventListener('click', (e) => {
+                    if (e.target === tooltip) {
+                        tooltip.remove();
+                    }
+                });
+            };
+        }
+        
+        // RIASEC 점수를 강점 분석 섹션에 추가
+        const chartDescription = document.querySelector('.chart-description');
+        if (chartDescription) {
+            chartDescription.innerHTML = `
+                <strong>RIASEC 성향 점수:</strong> ${riasecDisplay}<br>
+                아래 차트는 Holland의 RIASEC 이론에 기반한 직업 성향 분석 결과입니다. 
+                각 영역별 점수가 높을수록 해당 성향이 강함을 의미합니다.
+            `;
+        }
     }
 
     displayJobRecommendations(topJobs) {
@@ -889,10 +1052,6 @@ class AssessmentManager {
                     <div class="job-explanation">
                         <strong>적합도 근거:</strong> ${job.explanation ? job.explanation.join(', ') : '종합 평가'}
                     </div>
-                    <div class="job-details">
-                        ${job.growth_outlook && job.avg_salary ? `<small><strong>성장 전망:</strong> ${job.growth_outlook} | <strong>예상 연봉:</strong> ${job.avg_salary}</small>` : ''}
-                        ${job.data_source ? `<br><small class="data-source"><strong>정보 출처:</strong> ${job.data_source}</small>` : ''}
-                    </div>
                 </div>
             `;
         }).join('');
@@ -902,7 +1061,7 @@ class AssessmentManager {
         const container = document.getElementById('action-plan');
         
         if (!actionPlan || actionPlan.length === 0) {
-            container.innerHTML = '<p>맞춤형 실행 계획을 준비 중입니다.</p>';
+            container.innerHTML = '<p>맞춤형 취업 준비 가이드를 준비 중입니다.</p>';
             return;
         }
 
@@ -910,9 +1069,6 @@ class AssessmentManager {
             <div class="action-item">
                 <div class="action-title">${action.title}</div>
                 <div class="action-description">${action.description}</div>
-                <div class="action-timeline">
-                    <small>예상 기간: ${action.timeline} | 우선순위: ${action.priority}</small>
-                </div>
                 <div class="action-link">
                     <span class="practical-advice">
                         💡 <strong>실행 팁:</strong> ${action.practicalTip || '단계별로 차근차근 진행하되, 완벽함보다는 꾸준함을 목표로 하세요.'}
@@ -937,7 +1093,14 @@ class AssessmentManager {
         this.strengthsChart = new Chart(ctx, {
             type: 'radar',
             data: {
-                labels: ['현실형(Realistic)', '탐구형(Investigative)', '예술형(Artistic)', '사회형(Social)', '진취형(Enterprising)', '관습형(Conventional)'],
+                labels: [
+                    ['현실형', 'Realistic', `(${safeRiasecScores.R || 0}점)`], 
+                    ['탐구형', 'Investigative', `(${safeRiasecScores.I || 0}점)`], 
+                    ['예술형', 'Artistic', `(${safeRiasecScores.A || 0}점)`], 
+                    ['사회형', 'Social', `(${safeRiasecScores.S || 0}점)`], 
+                    ['진취형', 'Enterprising', `(${safeRiasecScores.E || 0}점)`], 
+                    ['관습형', 'Conventional', `(${safeRiasecScores.C || 0}점)`]
+                ],
                 datasets: [{
                     label: 'RIASEC 성향 분석',
                     data: [
@@ -1018,6 +1181,202 @@ class AssessmentManager {
         this.responses = {};
         localStorage.removeItem('assessmentData');
         this.showSection('landing');
+    }
+
+
+    updateQuestionStates(stepNum) {
+        // Update visual state of questions based on completion
+        const stepKey = `step${stepNum}`;
+        const stepData = this.stepData[stepKey];
+        
+        if (!stepData || !stepData.questions) return;
+
+        stepData.questions.forEach((question, index) => {
+            const questionElement = document.querySelector(`[data-question-index="${index}"]`);
+            if (!questionElement) return;
+
+            const response = this.getResponse(stepNum, question.id);
+            let isValid = false;
+
+            switch (question.type) {
+                case 'multiple_choice':
+                    isValid = response !== null && response !== undefined && response !== '';
+                    break;
+                case 'ranking':
+                    isValid = Array.isArray(response) && response.length > 0;
+                    break;
+                case 'multiple_select':
+                    isValid = Array.isArray(response) && response.length > 0;
+                    break;
+                case 'scale':
+                    if (!response || typeof response !== 'object') {
+                        isValid = false;
+                    } else {
+                        isValid = question.options.every(opt => 
+                            response[opt.id] !== undefined && response[opt.id] !== null
+                        );
+                    }
+                    break;
+                default:
+                    isValid = response !== null && response !== undefined && response !== '';
+                    break;
+            }
+
+            // Add or remove incomplete class
+            if (!isValid) {
+                questionElement.classList.add('incomplete');
+            } else {
+                questionElement.classList.remove('incomplete');
+            }
+        });
+    }
+
+    getQuestionTitle(question) {
+        // Extract short title from question text
+        const questionText = question.question || '';
+        if (questionText.length > 30) {
+            return questionText.substring(0, 30) + '...';
+        }
+        return questionText;
+    }
+
+    showValidationPopup(missingItems, stepNum) {
+        const popup = document.createElement('div');
+        popup.className = 'validation-popup-overlay';
+        
+        const itemsList = missingItems.map(item => `<li>${item}</li>`).join('');
+        
+        popup.innerHTML = `
+            <div class="validation-popup">
+                <div class="validation-popup-header">
+                    <h3>❗ 입력하지 않은 항목이 있어요</h3>
+                </div>
+                <div class="validation-popup-body">
+                    <p>다음 항목들을 입력해주세요:</p>
+                    <ul class="missing-items-list">
+                        ${itemsList}
+                    </ul>
+                    <p><small>모든 항목을 입력해야 다음 단계로 진행할 수 있습니다.</small></p>
+                </div>
+                <div class="validation-popup-actions">
+                    <button class="btn-primary" onclick="this.closest('.validation-popup-overlay').remove()">
+                        확인
+                    </button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(popup);
+
+        // Close on background click
+        popup.addEventListener('click', (e) => {
+            if (e.target === popup) {
+                popup.remove();
+            }
+        });
+
+        // Auto focus on first incomplete question
+        setTimeout(() => {
+            this.focusFirstIncompleteQuestion(stepNum);
+        }, 500);
+    }
+
+    focusFirstIncompleteQuestion(stepNum) {
+        const stepSection = document.getElementById(`step${stepNum}`);
+        if (!stepSection) return;
+
+        const firstIncompleteQuestion = stepSection.querySelector('.question.incomplete');
+        if (firstIncompleteQuestion) {
+            firstIncompleteQuestion.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Add highlight effect
+            firstIncompleteQuestion.classList.add('highlight-incomplete');
+            setTimeout(() => {
+                firstIncompleteQuestion.classList.remove('highlight-incomplete');
+            }, 2000);
+        }
+    }
+
+    saveCurrentStepResponses(stepNum) {
+        // This method ensures current responses are saved to localStorage
+        if (this.responses[`step${stepNum}`]) {
+            localStorage.setItem('assessmentData', JSON.stringify(this.responses));
+        }
+    }
+
+
+    hideLoadingAndShowError(errorMessage) {
+        // Hide loading spinner
+        const resultsContainer = document.querySelector('.results-container');
+        if (resultsContainer) {
+            resultsContainer.innerHTML = '';
+        }
+
+        // Show custom error popup instead of browser alert
+        this.showErrorPopup(errorMessage);
+    }
+
+    showErrorPopup(errorMessage) {
+        // Remove any existing error popups
+        const existingPopup = document.querySelector('.error-popup-overlay');
+        if (existingPopup) {
+            existingPopup.remove();
+        }
+
+        const popup = document.createElement('div');
+        popup.className = 'error-popup-overlay';
+        
+        // Determine if this is a validation error or calculation error
+        const isValidationError = errorMessage.includes('미완료') || errorMessage.includes('단계');
+        const isCompletionError = errorMessage.includes('완료되지 않았습니다');
+        
+        let title, description, actionText, actionHandler;
+        
+        if (isValidationError) {
+            title = '❗ 아직 완료되지 않은 항목이 있어요';
+            description = '모든 질문에 답변해야 결과를 확인할 수 있습니다.';
+            actionText = '답변 완료하기';
+            actionHandler = 'goBackToIncompleteStep()';
+        } else if (isCompletionError) {
+            title = '⚠️ 진단이 완료되지 않았습니다';
+            description = '일부 응답이 저장되지 않았을 수 있습니다. 처음부터 다시 진행해주세요.';
+            actionText = '처음부터 다시 시작';
+            actionHandler = 'restartAssessment()';
+        } else {
+            title = '❌ 결과 계산 중 오류가 발생했습니다';
+            description = errorMessage;
+            actionText = '다시 시도하기';
+            actionHandler = 'retryCalculation()';
+        }
+        
+        popup.innerHTML = `
+            <div class="error-popup">
+                <div class="error-popup-header">
+                    <h3>${title}</h3>
+                </div>
+                <div class="error-popup-body">
+                    <p>${description}</p>
+                    ${isValidationError ? `<p><small>문제: ${errorMessage}</small></p>` : ''}
+                </div>
+                <div class="error-popup-actions">
+                    <button class="btn-secondary" onclick="this.closest('.error-popup-overlay').remove()">
+                        닫기
+                    </button>
+                    <button class="btn-primary" onclick="${actionHandler}; this.closest('.error-popup-overlay').remove()">
+                        ${actionText}
+                    </button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(popup);
+
+        // Close on background click
+        popup.addEventListener('click', (e) => {
+            if (e.target === popup) {
+                popup.remove();
+            }
+        });
     }
 }
 
@@ -1191,7 +1550,7 @@ function selectMultipleOption(event, stepNum, questionId, optionId, element, max
             
             // Check if we can select more
             if (selectedOptions.length >= maxSelections) {
-                alert(`최대 ${maxSelections}개까지만 선택할 수 있습니다.`);
+                showSimplePopup(`최대 ${maxSelections}개까지만 선택할 수 있습니다.`);
                 return;
             }
             
@@ -1223,7 +1582,7 @@ function selectRankingOption(event, stepNum, questionId, optionId, element, maxS
     } else {
         const selectedOptions = questionContainer.querySelectorAll('.option.selected');
         if (selectedOptions.length >= maxSelections) {
-            alert(`최대 ${maxSelections}개까지만 선택할 수 있습니다.`);
+            showSimplePopup(`최대 ${maxSelections}개까지만 선택할 수 있습니다.`);
             return;
         }
         
@@ -1272,8 +1631,74 @@ function saveScaleResponse(stepNum, questionId, optionId, value) {
     window.assessmentManager.saveResponse(parseInt(stepNum), questionId, currentResponses);
 }
 
+// Global functions for error popup actions
+function goBackToIncompleteStep() {
+    // Find the first incomplete step and go back to it
+    const manager = window.assessmentManager;
+    
+    for (let step = 1; step <= 3; step++) {
+        const validation = manager.validateCurrentStepWithDetails(step);
+        if (!validation.isValid) {
+            manager.showSection(`step${step}`);
+            manager.loadStep(step);
+            manager.updateQuestionStates(step);
+            return;
+        }
+    }
+    
+    // If all steps are complete, go to step 3
+    manager.showSection('step3');
+    manager.loadStep(3);
+}
 
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    window.assessmentManager = new AssessmentManager();
-});
+function restartAssessment() {
+    if (window.assessmentManager) {
+        window.assessmentManager.restart();
+    }
+}
+
+function retryCalculation() {
+    if (window.assessmentManager) {
+        window.assessmentManager.calculateAndShowResults();
+    }
+}
+
+function showSimplePopup(message) {
+    // Remove any existing simple popups
+    const existingPopup = document.querySelector('.simple-popup-overlay');
+    if (existingPopup) {
+        existingPopup.remove();
+    }
+
+    const popup = document.createElement('div');
+    popup.className = 'simple-popup-overlay';
+    popup.innerHTML = `
+        <div class="simple-popup">
+            <div class="simple-popup-content">
+                <p>${message}</p>
+                <button class="btn-primary" onclick="this.closest('.simple-popup-overlay').remove()">
+                    확인
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(popup);
+    
+    // Close on background click
+    popup.addEventListener('click', (e) => {
+        if (e.target === popup) {
+            popup.remove();
+        }
+    });
+    
+    // Auto close after 3 seconds
+    setTimeout(() => {
+        if (popup.parentNode) {
+            popup.remove();
+        }
+    }, 3000);
+}
+
+// Note: AssessmentManager is initialized by CareerAssessmentApp in main.js
+// to prevent duplicate initialization conflicts

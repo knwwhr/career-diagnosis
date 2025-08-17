@@ -7,6 +7,20 @@ const ASSESSMENT_DATA = {
         title: "강점 발견",
         questions: [
             {
+                id: "educational_background",
+                type: "multiple_choice",
+                question: "전공이나 학과는 무엇인가요? (가장 가까운 것을 선택하세요)",
+                options: [
+                    { id: "engineering", text: "공학계열 (컴퓨터공학, 전기공학, 기계공학 등)", bonus_jobs: ["software_developer", "frontend_developer", "backend_developer", "fullstack_developer", "mobile_developer", "ai_ml_engineer", "devops_engineer", "cloud_engineer"] },
+                    { id: "business", text: "경영/경제계열", bonus_jobs: ["business_developer", "marketing_manager", "consultant", "financial_analyst", "investment_analyst"] },
+                    { id: "design", text: "디자인/예술계열", bonus_jobs: ["ux_ui_designer", "graphic_designer", "brand_designer", "product_designer", "web_designer", "video_editor", "illustrator"] },
+                    { id: "liberal_arts", text: "인문계열", bonus_jobs: ["content_creator", "copywriter", "education_trainer", "pr_specialist", "content_marketer"] },
+                    { id: "science", text: "자연과학계열", bonus_jobs: ["data_scientist", "bio_researcher", "clinical_researcher", "medical_data_analyst"] },
+                    { id: "social_science", text: "사회과학계열", bonus_jobs: ["career_counselor", "consultant", "pr_specialist", "training_coordinator"] },
+                    { id: "other", text: "기타/비전공자", bonus_jobs: [] }
+                ]
+            },
+            {
                 id: "values_priorities",
                 type: "ranking",
                 question: "일할 때 가장 중요하게 생각하는 가치를 3개 골라 순서대로 선택해주세요",
@@ -44,20 +58,6 @@ const ASSESSMENT_DATA = {
                     { id: "helping", text: "사람들을 도와주고 함께 소통하는 일", riasec: "S", weight: 3 },
                     { id: "leadership", text: "앞장서서 팀을 이끌고 사업을 추진하는 일", riasec: "E", weight: 3 },
                     { id: "organizing", text: "복잡한 일들을 체계적으로 정리하고 관리하는 일", riasec: "C", weight: 3 }
-                ]
-            },
-            {
-                id: "educational_background",
-                type: "multiple_choice",
-                question: "전공이나 학과는 무엇인가요? (가장 가까운 것을 선택하세요)",
-                options: [
-                    { id: "engineering", text: "공학계열 (컴퓨터공학, 전기공학, 기계공학 등)", bonus_jobs: ["software_developer", "frontend_developer", "backend_developer", "fullstack_developer", "mobile_developer", "ai_ml_engineer", "devops_engineer", "cloud_engineer"] },
-                    { id: "business", text: "경영/경제계열", bonus_jobs: ["business_developer", "marketing_manager", "consultant", "financial_analyst", "investment_analyst"] },
-                    { id: "design", text: "디자인/예술계열", bonus_jobs: ["ux_ui_designer", "graphic_designer", "brand_designer", "product_designer", "web_designer", "video_editor", "illustrator"] },
-                    { id: "liberal_arts", text: "인문계열", bonus_jobs: ["content_creator", "copywriter", "education_trainer", "pr_specialist", "content_marketer"] },
-                    { id: "science", text: "자연과학계열", bonus_jobs: ["data_scientist", "bio_researcher", "clinical_researcher", "medical_data_analyst"] },
-                    { id: "social_science", text: "사회과학계열", bonus_jobs: ["career_counselor", "consultant", "pr_specialist", "training_coordinator"] },
-                    { id: "other", text: "기타/비전공자", bonus_jobs: [] }
                 ]
             },
             {
@@ -107,16 +107,16 @@ const ASSESSMENT_DATA = {
                 type: "scale",
                 question: "아래 직업들에 대해 얼마나 알고 있나요? (1: 잘 모르겠어요, 5: 잘 알고 있어요)",
                 options: [
-                    { id: "software_dev", text: "개발자", scale: [1, 2, 3, 4, 5] },
-                    { id: "data_analyst", text: "데이터 분석가", scale: [1, 2, 3, 4, 5] },
-                    { id: "marketing_manager", text: "마케터", scale: [1, 2, 3, 4, 5] },
-                    { id: "product_manager", text: "기획자", scale: [1, 2, 3, 4, 5] },
-                    { id: "consultant", text: "컨설턴트", scale: [1, 2, 3, 4, 5] },
-                    { id: "designer", text: "디자이너", scale: [1, 2, 3, 4, 5] },
-                    { id: "content_creator", text: "콘텐츠 크리에이터", scale: [1, 2, 3, 4, 5] },
-                    { id: "business_analyst", text: "비즈니스 분석가", scale: [1, 2, 3, 4, 5] },
-                    { id: "financial_analyst", text: "금융 분석가", scale: [1, 2, 3, 4, 5] },
-                    { id: "teacher", text: "교육/강사", scale: [1, 2, 3, 4, 5] }
+                    { id: "software_dev", text: "개발자", desc: "웹사이트, 앱, 프로그램을 만드는 일", scale: [1, 2, 3, 4, 5] },
+                    { id: "data_analyst", text: "데이터 분석가", desc: "숫자와 데이터를 분석해 인사이트를 찾는 일", scale: [1, 2, 3, 4, 5] },
+                    { id: "marketing_manager", text: "마케터", desc: "제품을 알리고 고객을 모으는 마케팅 전략을 세우는 일", scale: [1, 2, 3, 4, 5] },
+                    { id: "product_manager", text: "기획자", desc: "제품이나 서비스의 방향성을 정하고 개발을 관리하는 일", scale: [1, 2, 3, 4, 5] },
+                    { id: "consultant", text: "컨설턴트", desc: "기업의 문제를 분석하고 해결 방안을 제시하는 일", scale: [1, 2, 3, 4, 5] },
+                    { id: "designer", text: "디자이너", desc: "UI/UX, 그래픽, 제품 등을 시각적으로 디자인하는 일", scale: [1, 2, 3, 4, 5] },
+                    { id: "content_creator", text: "콘텐츠 크리에이터", desc: "영상, 글, 이미지 등 다양한 콘텐츠를 기획하고 제작하는 일", scale: [1, 2, 3, 4, 5] },
+                    { id: "business_analyst", text: "비즈니스 분석가", desc: "비즈니스 프로세스를 분석하고 개선 방안을 찾는 일", scale: [1, 2, 3, 4, 5] },
+                    { id: "financial_analyst", text: "금융 분석가", desc: "투자, 재무, 리스크 등을 분석해 금융 의사결정을 돕는 일", scale: [1, 2, 3, 4, 5] },
+                    { id: "teacher", text: "교육/강사", desc: "학생이나 직장인에게 지식과 스킬을 가르치는 일", scale: [1, 2, 3, 4, 5] }
                 ]
             },
             {
@@ -124,16 +124,16 @@ const ASSESSMENT_DATA = {
                 type: "scale", 
                 question: "아래 스킬들에 대해 얼마나 자신 있나요? (1: 전혀 자신없어요, 5: 자신있어요)",
                 options: [
-                    { id: "coding", text: "코딩/프로그래밍", scale: [1, 2, 3, 4, 5] },
-                    { id: "data_analysis", text: "데이터 분석", scale: [1, 2, 3, 4, 5] },
-                    { id: "design", text: "디자인", scale: [1, 2, 3, 4, 5] },
-                    { id: "writing", text: "글쓰기", scale: [1, 2, 3, 4, 5] },
-                    { id: "presentation", text: "발표하기", scale: [1, 2, 3, 4, 5] },
-                    { id: "planning", text: "기획/계획수립", scale: [1, 2, 3, 4, 5] },
-                    { id: "communication", text: "소통/커뮤니케이션", scale: [1, 2, 3, 4, 5] },
-                    { id: "creativity", text: "창의성/아이디어", scale: [1, 2, 3, 4, 5] },
-                    { id: "analysis", text: "분석/사고력", scale: [1, 2, 3, 4, 5] },
-                    { id: "technical", text: "기술/도구 활용", scale: [1, 2, 3, 4, 5] }
+                    { id: "coding", text: "코딩/프로그래밍", desc: "파이썬, 자바스크립트 등으로 코드 작성하기", scale: [1, 2, 3, 4, 5] },
+                    { id: "data_analysis", text: "데이터 분석", desc: "엑셀, SQL, 파이썬으로 데이터 처리하고 인사이트 찾기", scale: [1, 2, 3, 4, 5] },
+                    { id: "design", text: "디자인", desc: "포토샵, 피그마 등으로 시각적인 결과물 만들기", scale: [1, 2, 3, 4, 5] },
+                    { id: "writing", text: "글쓰기", desc: "블로그, 보고서, 기획서 등 목적에 맞는 글 작성하기", scale: [1, 2, 3, 4, 5] },
+                    { id: "presentation", text: "발표하기", desc: "PPT 만들고 사람들 앞에서 설득력 있게 발표하기", scale: [1, 2, 3, 4, 5] },
+                    { id: "planning", text: "기획/계획수립", desc: "목표 설정하고 체계적인 실행 계획 세우기", scale: [1, 2, 3, 4, 5] },
+                    { id: "communication", text: "소통/커뮤니케이션", desc: "다양한 사람들과 원활하게 의사소통하기", scale: [1, 2, 3, 4, 5] },
+                    { id: "creativity", text: "창의성/아이디어", desc: "새롭고 참신한 아이디어를 떠올리고 구현하기", scale: [1, 2, 3, 4, 5] },
+                    { id: "analysis", text: "분석/사고력", desc: "복잡한 정보를 논리적으로 분석하고 결론 도출하기", scale: [1, 2, 3, 4, 5] },
+                    { id: "technical", text: "기술/도구 활용", desc: "새로운 소프트웨어나 디지털 도구 빠르게 배우고 활용하기", scale: [1, 2, 3, 4, 5] }
                 ]
             }
         ]
@@ -381,7 +381,7 @@ const JOB_DATABASE = {
         required_skills: ["communication", "creativity", "planning"],
         riasec_match: ["E", "A"],
         industry: ["marketing_sales"],
-        description: "제품이나 서비스의 시장성을 조사하고 마케팅 전략을 수립하여 판매촉진 업무를 수행",
+        description: "제품이나 서비스의 시장성을 조사하고 마케팅 전략을 수립하여 판매촉진 업무를 담당해요",
         growth_outlook: "보통",
         avg_salary: "중위값 기준 4000만원 내외",
         data_source: "한국표준직업분류(통계청), 고용노동부 워크넷",
@@ -1178,7 +1178,7 @@ class AssessmentAPI {
             // From personality question
             if (responses.step1.personality_riasec) {
                 const selected = responses.step1.personality_riasec;
-                const option = ASSESSMENT_DATA.step1.questions[2].options.find(opt => opt.id === selected);
+                const option = ASSESSMENT_DATA.step1.questions[3].options.find(opt => opt.id === selected);
                 if (option) {
                     riasecScores[option.riasec] += option.weight;
                 }
@@ -1187,7 +1187,7 @@ class AssessmentAPI {
             // From values (weighted)
             if (responses.step1.values_priorities) {
                 responses.step1.values_priorities.forEach((valueId, index) => {
-                    const option = ASSESSMENT_DATA.step1.questions[0].options.find(opt => opt.id === valueId);
+                    const option = ASSESSMENT_DATA.step1.questions[1].options.find(opt => opt.id === valueId);
                     if (option) {
                         Object.keys(option.weight).forEach(riasec => {
                             riasecScores[riasec] += option.weight[riasec] * (3 - index); // Higher weight for higher priority
@@ -1206,38 +1206,45 @@ class AssessmentAPI {
             let score = 0;
             let explanations = [];
             
-            // 기본 점수 (10점 시작)
-            score = 10;
-            explanations.push("기본 적합도");
+            // 전공 보너스 (0-5점)
+            let majorBonus = 0;
+            if (responses.step1?.educational_background) {
+                const educationOption = ASSESSMENT_DATA.step1.questions[0].options.find(opt => opt.id === responses.step1.educational_background);
+                if (educationOption?.bonus_jobs?.includes(jobId)) {
+                    majorBonus = 5; // 전공 일치시 5점
+                    explanations.push(`전공 일치 보너스 (+${majorBonus}점)`);
+                }
+            }
+            score = majorBonus;
             
-            // RIASEC 성향 매칭 (최대 30점)
+            // RIASEC 성향 매칭 (최대 25점) - 1순위 핵심 요소
             let riasecBonus = 0;
             if (job.riasec_match && Array.isArray(job.riasec_match)) {
                 job.riasec_match.forEach(riasec => {
                     const riasecScore = riasecScores[riasec] || 0;
-                    riasecBonus += riasecScore * 2; // 가중치 감소
+                    riasecBonus += riasecScore * 1.67; // 25점 만점 조정
                 });
             }
-            score += Math.min(riasecBonus, 30);
+            score += Math.min(riasecBonus, 25);
             if (riasecBonus > 0) {
-                explanations.push(`성향 일치도 (+${Math.min(riasecBonus, 30)}점)`);
+                explanations.push(`성향 일치도 (+${Math.min(riasecBonus, 25)}점)`);
             }
 
-            // 관심 산업 분야 매칭 (최대 20점)
+            // 관심 산업 분야 매칭 (최대 10점) - 2순위 참고 요소
             let industryBonus = 0;
             if (responses.step2?.industry_interest && job.industry && Array.isArray(job.industry)) {
                 job.industry.forEach(industry => {
                     if (responses.step2.industry_interest.includes(industry)) {
-                        industryBonus += 8; // 산업별 8점으로 감소
+                        industryBonus += 5; // 산업별 5점으로 대폭 감소
                     }
                 });
             }
-            score += Math.min(industryBonus, 20);
+            score += Math.min(industryBonus, 10);
             if (industryBonus > 0) {
-                explanations.push(`관심 분야 일치 (+${Math.min(industryBonus, 20)}점)`);
+                explanations.push(`관심 분야 일치 (+${Math.min(industryBonus, 10)}점)`);
             }
 
-            // 스킬 자신감 매칭 (최대 25점)
+            // 스킬 자신감 매칭 (최대 22점) - 1순위 핵심 요소
             let skillBonus = 0;
             if (responses.step2?.skill_confidence && job.required_skills && Array.isArray(job.required_skills)) {
                 job.required_skills.forEach(skill => {
@@ -1260,16 +1267,16 @@ class AssessmentAPI {
                     const mappedSkill = skillMapping[skill];
                     if (mappedSkill && responses.step2.skill_confidence[mappedSkill]) {
                         const skillScore = responses.step2.skill_confidence[mappedSkill];
-                        skillBonus += skillScore * 3; // 스킬별 가중치 감소
+                        skillBonus += skillScore * 2.64; // 스킬별 가중치 (22점 만점 조정)
                     }
                 });
             }
-            score += Math.min(skillBonus, 25);
+            score += Math.min(skillBonus, 22);
             if (skillBonus > 0) {
-                explanations.push(`보유 스킬 일치도 (+${Math.min(skillBonus, 25)}점)`);
+                explanations.push(`보유 스킬 일치도 (+${Math.min(skillBonus, 22)}점)`);
             }
 
-            // 직무 이해도 보너스 (최대 20점 - 가중치 증가)
+            // 직무 이해도 보너스 (최대 15점) - 2순위 참고 요소
             let understandingBonus = 0;
             if (responses.step2?.job_understanding) {
                 const jobUnderstandingMapping = {
@@ -1355,15 +1362,15 @@ class AssessmentAPI {
                 const understandingKey = jobUnderstandingMapping[jobId];
                 if (understandingKey && responses.step2.job_understanding[understandingKey]) {
                     const understandingLevel = responses.step2.job_understanding[understandingKey];
-                    // 이해도에 따른 차등 점수 부여
+                    // 이해도에 따른 차등 점수 부여 (15점 만점 조정)
                     if (understandingLevel >= 4) {
-                        understandingBonus = 20; // 높은 이해도
+                        understandingBonus = 15; // 높은 이해도
                     } else if (understandingLevel === 3) {
-                        understandingBonus = 12; // 보통 이해도
+                        understandingBonus = 9; // 보통 이해도
                     } else if (understandingLevel === 2) {
-                        understandingBonus = 6; // 낮은 이해도
+                        understandingBonus = 4; // 낮은 이해도
                     } else {
-                        understandingBonus = 2; // 매우 낮은 이해도
+                        understandingBonus = 1; // 매우 낮은 이해도
                     }
                 }
             }
@@ -1469,7 +1476,7 @@ class AssessmentAPI {
                 explanations.push(`가치관 일치도 (+${valuesBonus}점)`);
             }
 
-            // 업무 환경 일치도 보너스 (최대 15점)
+            // 업무 환경 일치도 보너스 (최대 12점) - 3순위 보조 요소
             let environmentBonus = 0;
             if (responses.step1?.work_environment && job.work_environment) {
                 const userPrefs = responses.step1.work_environment;
@@ -1481,69 +1488,31 @@ class AssessmentAPI {
                         const userPref = userPrefs[envKey]; // 1-5점
                         const jobReq = jobEnv[envKey]; // 1-5점
                         
-                        // 선호도와 직무 요구사항이 일치할수록 높은 점수
+                        // 선호도와 직무 요구사항이 일치할수록 높은 점수 (12점 만점 조정)
                         const diff = Math.abs(userPref - jobReq);
                         if (diff === 0) {
-                            environmentBonus += 3; // 완전 일치
+                            environmentBonus += 2.4; // 완전 일치
                         } else if (diff === 1) {
-                            environmentBonus += 2; // 거의 일치
+                            environmentBonus += 1.6; // 거의 일치
                         } else if (diff === 2) {
-                            environmentBonus += 1; // 부분 일치
+                            environmentBonus += 0.8; // 부분 일치
                         }
                         // diff > 2는 점수 없음
                     }
                 });
             }
+            environmentBonus = Math.round(environmentBonus); // 정수로 반올림
             score += environmentBonus;
             if (environmentBonus > 0) {
                 explanations.push(`업무 환경 일치도 (+${environmentBonus}점)`);
             }
 
-            // 경험 부족 페널티 (미경험 직무에 대한 현실적 조정)
-            let experiencePenalty = 0;
-            if (responses.step1?.strengths_experience) {
-                const userStrengths = responses.step1.strengths_experience;
-                const requiredCount = job.required_skills.length;
-                const matchingStrengths = job.required_skills.filter(skill => {
-                    const strengthMapping = {
-                        'coding': ['technical', 'problem_solving'],
-                        'analysis': ['analysis', 'problem_solving'],
-                        'communication': ['communication', 'presentation'],
-                        'creativity': ['creativity'],
-                        'leadership': ['leadership'],
-                        'planning': ['planning'],
-                        'technical': ['technical'],
-                        'teamwork': ['teamwork'],
-                        'problem_solving': ['problem_solving'],
-                        'user_research': ['analysis'],
-                        'design': ['creativity'],
-                        'writing': ['communication']
-                    };
-                    const relatedStrengths = strengthMapping[skill] || [];
-                    return relatedStrengths.some(s => userStrengths.includes(s));
-                }).length;
-                
-                const experienceRatio = matchingStrengths / requiredCount;
-                if (experienceRatio < 0.5) {
-                    experiencePenalty = 10; // 경험 부족 시 10점 감점
-                    explanations.push(`경험 부족 (-${experiencePenalty}점)`);
-                }
-            }
-            score -= experiencePenalty;
+            // 경험 부족 페널티 제거 (준비상황은 현재 상태일 뿐 적합도와 별개)
 
-            // 전공 보너스 (최대 10점)
-            let educationBonus = 0;
-            if (responses.step1?.educational_background) {
-                const educationOption = ASSESSMENT_DATA.step1.questions[3].options.find(opt => opt.id === responses.step1.educational_background);
-                if (educationOption?.bonus_jobs?.includes(jobId)) {
-                    educationBonus = 10;
-                    explanations.push(`전공 관련 보너스 (+${educationBonus}점)`);
-                }
-            }
-            score += educationBonus;
-
-            // 최종 점수는 25-105점 범위로 조정 (전공 보너스 포함)
-            const finalScore = Math.max(25, Math.min(score, 105));
+            // 최종 점수 (상한 없음)
+            // 배점: 전공보너스(0-5) + RIASEC(25) + 스킬(22) + 이해도(15) + 관심분야(10) + 환경(12) + 가치관(8)
+            // 최대 가능 점수: 5+25+22+15+10+12+8 = 97점
+            const finalScore = score;
             
             jobScores[jobId] = finalScore;
             jobExplanations[jobId] = explanations;
@@ -1585,7 +1554,7 @@ class AssessmentAPI {
                     description: "3개월 이내 목표이므로 이력서를 즉시 완성하세요.",
                     timeline: "1주일",
                     priority: "높음",
-                    practicalTip: "채용공고 3-5개를 먼저 분석하고, 그에 맞는 키워드를 이력서에 포함하세요."
+                    practicalTip: "채용공고 3-5개를 먼저 분석해보면 어떨까요? 그에 맞는 키워드를 이력서에 포함하면 면접 기회를 늘릴 수 있을 것 같아요."
                 });
             }
         }
@@ -1596,7 +1565,7 @@ class AssessmentAPI {
                 description: `${results.topJobs[0]?.title} 분야에 맞는 포트폴리오를 만들어보세요.`,
                 timeline: "1-2개월",
                 priority: "높음",
-                practicalTip: "질보다 양으로 시작하세요. 작은 프로젝트 3개가 큰 프로젝트 1개보다 나을 수 있습니다."
+                practicalTip: "질보다 양으로 시작해보면 어떨까요? 작은 프로젝트 3개가 큰 프로젝트 1개보다 더 효과적일 것 같아요."
             });
         }
 
@@ -1636,7 +1605,7 @@ class AssessmentAPI {
                     },
                     'self_study': {
                         method: '독학/책',
-                        description: '자기주도적 학습으로 깊이 있는 이론 습득',
+                        description: '자기주도적 학습으로 깊이 있는 이론을 습득',
                         platforms: '전문 서적, 공식 문서, 블로그'
                     },
                     'project_based': {
@@ -1649,25 +1618,25 @@ class AssessmentAPI {
                 if (skillNames[skill]) {
                     const methodInfo = learningMethodDetails[learningMethod];
                     const skillTips = {
-                        'coding': '매일 1시간씩 코딩하는 습관을 만드세요. 하루 놓치면 3일 감을 잃습니다.',
-                        'analysis': '실제 데이터를 구해서 분석해보세요. 캐글이나 공공데이터를 활용하면 좋습니다.',
-                        'communication': '온라인 스터디나 발표 기회를 적극 찾아보세요. 말하기는 연습으로만 늡니다.',
-                        'creativity': '매일 새로운 것을 관찰하고 "왜?"라고 질문하는 습관을 만드세요.',
-                        'planning': '개인 프로젝트부터 시작해서 기획서 작성 연습을 해보세요.',
-                        'technical': '공식 문서 읽기를 습관화하고, 직접 만들어보면서 익히세요.',
-                        'design': '매일 다른 디자인을 분석하고 따라 만들어보세요. 베끼기가 창조의 시작입니다.',
-                        'problem_solving': '어려운 문제를 만나면 작은 단위로 나누어 해결하는 연습을 하세요.',
-                        'user_research': '주변 사람들에게 자주 물어보고 의견을 수집하는 습관을 만드세요.'
+                        'coding': '매일 1시간씩 코딩하는 습관을 만들어보면 어떨까요? 꾸준히 하다 보면 실력이 눈에 띄게 향상될 것 같아요.',
+                        'analysis': '실제 데이터를 구해서 분석해보면 어떨까요? 캐글이나 공공데이터를 활용하면 실무 경험을 쌓을 수 있을 것 같아요.',
+                        'communication': '온라인 스터디나 발표 기회를 적극 찾아보면 어떨까요? 실제 경험을 통해서만 실력을 늘릴 수 있을 것 같아요.',
+                        'creativity': '매일 새로운 것을 관찰하고 "왜?"라고 질문해보면 어떨까요? 호기심을 유지하면 창의력을 기를 수 있을 것 같아요.',
+                        'planning': '개인 프로젝트부터 시작해서 기획서 작성 연습을 해보면 어떨까요? 작은 것부터 체계화하면 기획 역량을 키울 수 있을 것 같아요.',
+                        'technical': '공식 문서 읽기를 습관화해보면 어떨까요? 직접 만들어보면서 익히면 깊이 있는 이해를 할 수 있을 것 같아요.',
+                        'design': '매일 다른 디자인을 분석하고 따라 만들어보면 어떨까요? 모방을 통해 창의성을 기를 수 있을 것 같아요.',
+                        'problem_solving': '어려운 문제를 작은 단위로 나누어 해결해보면 어떨까요? 단계별 접근을 통해 문제해결 능력을 향상시킬 수 있을 것 같아요.',
+                        'user_research': '주변 사람들에게 자주 물어보고 의견을 수집해보면 어떨까요? 다양한 관점을 접하면 통찰력을 기를 수 있을 것 같아요.'
                     };
                     
                     actionPlan.push({
                         title: `${skillNames[skill]} 향상`,
-                        description: `${topJob.title} 직무 필수 역량입니다. ${methodInfo.method}를 통해 ${methodInfo.description}하세요.`,
+                        description: `${topJob.title} 직무 필수 역량입니다. ${methodInfo.method}을 통해 ${methodInfo.description}하세요.`,
                         timeline: learningMethod === 'bootcamp' ? '3-6개월' : learningMethod === 'project_based' ? '2-4개월' : '2-3개월',
                         priority: "높음",
                         resources: methodInfo.platforms,
                         learning_method: methodInfo.method,
-                        practicalTip: skillTips[skill] || '매일 조금씩이라도 꾸준히 연습하는 것이 가장 중요합니다.'
+                        practicalTip: skillTips[skill] || '매일 조금씩이라도 꾸준히 연습해보면 어떨까요? 작은 노력의 누적이 큰 변화를 만들 수 있을 것 같아요.'
                     });
                 }
             });
@@ -1705,10 +1674,10 @@ class AssessmentAPI {
             },
             'project_based': {
                 title: '프로젝트 기반 학습 가이드',
-                description: '작은 프로젝트부터 시작, 코드 리뷰 요청, GitHub 포트폴리오 관리를 하세요.',
+                description: '작은 프로젝트부터 시작, 코드 리뷰 요청, GitHub 포트폴리오를 관리하세요.',
                 timeline: '각 프로젝트마다',
                 priority: '보통',
-                practicalTip: '완벽한 프로젝트 1개보다 80% 완성도 프로젝트 3개가 포트폴리오에 더 유리합니다.'
+                practicalTip: '완벽한 프로젝트 1개보다 80% 완성도 프로젝트 3개가 포트폴리오에 더 좋을 것 같아요.'
             }
         };
         

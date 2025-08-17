@@ -39,8 +39,7 @@ class CareerAssessmentApp {
         // Setup UI enhancements
         this.setupUIEnhancements();
 
-        // Check for existing session
-        this.checkExistingSession();
+        // Previous session restoration removed - always start fresh
 
         console.log('Career Assessment App initialized successfully');
     }
@@ -166,64 +165,7 @@ class CareerAssessmentApp {
         });
     }
 
-    checkExistingSession() {
-        const existingData = localStorage.getItem('assessmentData');
-        if (existingData) {
-            // 스마트 복원: 완료되지 않은 진단만 복원 물어보기
-            const parsedData = JSON.parse(existingData);
-            const isCompleted = this.isAssessmentCompleted(parsedData);
-            
-            if (!isCompleted) {
-                this.showResumeDialog();
-            }
-        }
-    }
-
-    isAssessmentCompleted(data) {
-        // 3단계 모두 완료되었는지 확인
-        return data.step1 && data.step2 && data.step3 && 
-               Object.keys(data.step1).length > 0 &&
-               Object.keys(data.step2).length > 0 &&
-               Object.keys(data.step3).length > 0;
-    }
-
-    showResumeDialog() {
-        const dialog = document.createElement('div');
-        dialog.className = 'resume-dialog-overlay';
-        dialog.innerHTML = `
-            <div class="resume-dialog">
-                <h3>이전 진단을 계속하시겠습니까?</h3>
-                <p>저장된 진단 데이터가 있습니다.<br>이어서 진행하시겠습니까?</p>
-                <div class="dialog-buttons">
-                    <button class="btn-secondary" onclick="this.closest('.resume-dialog-overlay').remove()">새로 시작</button>
-                    <button class="btn-primary" onclick="app.resumeAssessment()">계속하기</button>
-                </div>
-            </div>
-        `;
-        
-        document.body.appendChild(dialog);
-    }
-
-    resumeAssessment() {
-        // Remove dialog
-        document.querySelector('.resume-dialog-overlay')?.remove();
-        
-        // Resume from saved state
-        const savedData = JSON.parse(localStorage.getItem('assessmentData') || '{}');
-        this.assessmentManager.responses = savedData;
-        
-        // Determine which step to resume from
-        const lastCompletedStep = this.getLastCompletedStep(savedData);
-        this.assessmentManager.showSection(`step${lastCompletedStep + 1}`);
-        this.assessmentManager.loadStep(lastCompletedStep + 1);
-    }
-
-    getLastCompletedStep(savedData) {
-        if (savedData.step3) return 3;
-        if (savedData.step2) return 2;
-        if (savedData.step1) return 1;
-        return 0;
-    }
+    // Previous session restoration functions removed
 
     autoSave() {
         if (this.assessmentManager && this.assessmentManager.responses) {

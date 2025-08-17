@@ -250,13 +250,19 @@ main {
 }
 
 .option input[type="radio"] {
+    display: none; /* 척도 질문이 아닌 경우 라디오버튼 숨김 */
+}
+
+/* 척도 질문에서만 라디오버튼 표시 */
+.scale-rating .scale-option input[type="radio"] {
+    display: block;
     margin: 0;
     accent-color: #667eea;
-    width: 24px;
-    height: 24px;
+    width: 16px;
+    height: 16px;
     min-width: 44px;
     min-height: 44px;
-    transform: scale(1);
+    transform: scale(0.8);
     flex-shrink: 0;
     cursor: pointer;
     position: relative;
@@ -285,17 +291,7 @@ main {
     min-height: 80px;
 }
 
-.scale-option input[type="radio"] {
-    margin-bottom: 0.5rem;
-    accent-color: #667eea;
-    width: 20px;
-    height: 20px;
-    min-width: 44px;
-    min-height: 44px;
-    transform: scale(1);
-    cursor: pointer;
-    position: relative;
-}
+/* .scale-option input 스타일은 위의 .scale-rating .scale-option input으로 통합됨 */
 
 .scale-option label {
     display: block;
@@ -907,13 +903,7 @@ main {
     }
     
     .option input[type="radio"] {
-        margin-right: 0.75rem;
-        width: 24px;
-        height: 24px;
-        min-width: 44px;
-        min-height: 44px;
-        transform: scale(1);
-        padding: 10px; /* 터치 영역 확대 */
+        display: none; /* 모바일에서도 척도 질문이 아닌 경우 숨김 */
     }
     
     .option label {
@@ -939,12 +929,13 @@ main {
         justify-content: flex-start;
     }
     
-    .scale-option input[type="radio"] {
-        width: 24px;
-        height: 24px;
+    .scale-rating .scale-option input[type="radio"] {
+        display: block;
+        width: 19px;
+        height: 19px;
         min-width: 44px;
         min-height: 44px;
-        transform: scale(1);
+        transform: scale(0.8);
         margin-bottom: 0.25rem;
         padding: 10px; /* 터치 영역 확대 */
     }
@@ -1192,5 +1183,493 @@ main {
 
 .practical-advice strong {
     color: #667eea;
+}
+
+/* Validation Popup Styles */
+.validation-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.validation-popup {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    animation: popupSlideIn 0.3s ease-out;
+}
+
+@keyframes popupSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.validation-popup-header {
+    padding: 20px 20px 10px 20px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.validation-popup-header h3 {
+    margin: 0;
+    color: #e74c3c;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.validation-popup-body {
+    padding: 20px;
+}
+
+.validation-popup-body p {
+    margin: 0 0 15px 0;
+    color: #495057;
+    line-height: 1.5;
+}
+
+.missing-items-list {
+    background: #f8f9fa;
+    border-left: 4px solid #e74c3c;
+    padding: 15px 20px;
+    margin: 15px 0;
+    border-radius: 4px;
+}
+
+.missing-items-list li {
+    color: #495057;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.missing-items-list li:last-child {
+    margin-bottom: 0;
+}
+
+.validation-popup-actions {
+    padding: 15px 20px 20px 20px;
+    text-align: center;
+}
+
+.validation-popup-actions .btn-primary {
+    min-width: 100px;
+    padding: 10px 24px;
+}
+
+/* Highlight incomplete question effect */
+.question.highlight-incomplete {
+    background: linear-gradient(135deg, #fff5f5, #ffe6e6) !important;
+    border: 2px solid #e74c3c !important;
+    animation: highlightPulse 1s ease-in-out 2;
+    transition: all 0.3s ease;
+}
+
+@keyframes highlightPulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4);
+    }
+    50% {
+        transform: scale(1.02);
+        box-shadow: 0 0 0 10px rgba(231, 76, 60, 0.1);
+    }
+}
+
+.question.incomplete h3 {
+    color: #e74c3c !important;
+}
+
+/* Mobile responsive for validation popup */
+@media (max-width: 480px) {
+    .validation-popup {
+        margin: 10px;
+        border-radius: 8px;
+    }
+    
+    .validation-popup-header {
+        padding: 15px 15px 10px 15px;
+    }
+    
+    .validation-popup-header h3 {
+        font-size: 1.1rem;
+    }
+    
+    .validation-popup-body {
+        padding: 15px;
+    }
+    
+    .missing-items-list {
+        padding: 12px 15px;
+        margin: 12px 0;
+    }
+    
+    .validation-popup-actions {
+        padding: 12px 15px 15px 15px;
+    }
+}
+
+/* Error Popup Styles */
+.error-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 15000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.error-popup {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    animation: errorPopupSlideIn 0.3s ease-out;
+}
+
+@keyframes errorPopupSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.error-popup-header {
+    padding: 20px 20px 15px 20px;
+    border-bottom: 1px solid #e9ecef;
+    background: #fff5f5;
+    border-radius: 12px 12px 0 0;
+}
+
+.error-popup-header h3 {
+    margin: 0;
+    color: #d63384;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.error-popup-body {
+    padding: 20px;
+}
+
+.error-popup-body p {
+    margin: 0 0 15px 0;
+    color: #495057;
+    line-height: 1.5;
+}
+
+.error-popup-body p:last-child {
+    margin-bottom: 0;
+}
+
+.error-popup-body small {
+    color: #6c757d;
+    background: #f8f9fa;
+    padding: 8px 12px;
+    border-radius: 4px;
+    display: block;
+    margin-top: 10px;
+    border-left: 3px solid #dc3545;
+}
+
+.error-popup-actions {
+    padding: 15px 20px 20px 20px;
+    text-align: right;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.error-popup-actions .btn-secondary,
+.error-popup-actions .btn-primary {
+    min-width: 100px;
+    padding: 10px 20px;
+}
+
+/* Mobile responsive for error popup */
+@media (max-width: 480px) {
+    .error-popup {
+        margin: 10px;
+        border-radius: 8px;
+    }
+    
+    .error-popup-header {
+        padding: 15px 15px 12px 15px;
+        border-radius: 8px 8px 0 0;
+    }
+    
+    .error-popup-header h3 {
+        font-size: 1.1rem;
+    }
+    
+    .error-popup-body {
+        padding: 15px;
+    }
+    
+    .error-popup-actions {
+        padding: 12px 15px 15px 15px;
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .error-popup-actions .btn-secondary,
+    .error-popup-actions .btn-primary {
+        width: 100%;
+        margin: 0;
+    }
+}
+
+/* Simple Popup Styles */
+.simple-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.simple-popup {
+    background: white;
+    border-radius: 12px;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    animation: slideInUp 0.3s ease-out;
+}
+
+.simple-popup-content {
+    padding: 25px;
+    text-align: center;
+}
+
+.simple-popup-content p {
+    margin: 0 0 20px 0;
+    font-size: 1.1rem;
+    color: #333;
+    line-height: 1.5;
+}
+
+.simple-popup-content .btn-primary {
+    min-width: 100px;
+    padding: 10px 20px;
+    font-size: 1rem;
+}
+
+/* Mobile responsive for simple popup */
+@media (max-width: 480px) {
+    .simple-popup {
+        margin: 20px;
+        border-radius: 8px;
+    }
+    
+    .simple-popup-content {
+        padding: 20px;
+    }
+    
+    .simple-popup-content p {
+        font-size: 1rem;
+        margin-bottom: 15px;
+    }
+    
+    .simple-popup-content .btn-primary {
+        width: 100%;
+        padding: 12px;
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Enhanced Personality Tooltip Styles */
+.personality-tooltip {
+    max-width: 700px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.personality-tooltip .tooltip-body {
+    text-align: left;
+    line-height: 1.6;
+}
+
+.theory-background {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 4px solid #667eea;
+}
+
+.theory-background h4 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}
+
+.theory-background p {
+    margin: 0;
+    color: #555;
+    font-size: 0.95rem;
+}
+
+.selected-type-detail {
+    margin-bottom: 25px;
+}
+
+.selected-type-detail h4 {
+    color: #667eea;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 8px;
+}
+
+.main-description {
+    font-size: 1rem;
+    color: #444;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.characteristics-section,
+.jobs-section,
+.workstyle-section {
+    margin-bottom: 18px;
+}
+
+.characteristics-section h5,
+.jobs-section h5,
+.workstyle-section h5 {
+    color: #2c3e50;
+    margin-bottom: 8px;
+    font-size: 1rem;
+}
+
+.characteristics-section ul {
+    margin: 8px 0;
+    padding-left: 20px;
+}
+
+.characteristics-section li {
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.jobs-section p,
+.workstyle-section p {
+    color: #555;
+    margin: 8px 0;
+    font-size: 0.95rem;
+}
+
+.riasec-overview {
+    background: #f1f3f5;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #28a745;
+}
+
+.riasec-overview h4 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+}
+
+.types-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.type-item {
+    background: white;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    color: #555;
+    border: 1px solid #e9ecef;
+}
+
+.type-item strong {
+    color: #667eea;
+}
+
+.note {
+    color: #6c757d;
+    font-style: italic;
+    margin-top: 10px;
+}
+
+/* Mobile responsive for personality tooltip */
+@media (max-width: 768px) {
+    .personality-tooltip {
+        max-width: 95vw;
+        max-height: 85vh;
+        margin: 10px;
+    }
+    
+    .theory-background,
+    .riasec-overview {
+        padding: 15px;
+    }
+    
+    .types-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    .selected-type-detail h4 {
+        font-size: 1.1rem;
+    }
+    
+    .main-description {
+        font-size: 0.95rem;
+    }
 }
 
