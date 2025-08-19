@@ -15,8 +15,12 @@
       gtag('config', 'G-736XG0NZE4');
     </script>
     
+    <!-- Supabase -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    
     <link rel="stylesheet" href="assets/css/styles.css">
     <link rel="stylesheet" href="assets/css/additional.css">
+    <link rel="stylesheet" href="assets/css/personal-info.css">
 </head>
 <body>
     <div class="container">
@@ -79,6 +83,126 @@
                     <div class="start-section">
                         <button id="start-assessment" class="btn-primary-large">✨ 지금 시작하기</button>
                         <p class="info-text">10분만에 진단하고 나만의 커리어를 공략하세요!</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Personal Information Collection -->
+            <section id="personal-info" class="section">
+                <div class="progress-container">
+                    <div class="step-indicator">
+                        <div class="step-number active">📋</div>
+                        <div class="step-title">기본 정보 입력</div>
+                        <div class="step-subtitle">개인맞춤 진단을 위한 정보를 입력해주세요</div>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <!-- 개인정보 수집 동의서 -->
+                    <div class="privacy-notice">
+                        <h3>📋 개인정보 수집·이용 동의</h3>
+                        <div class="privacy-content">
+                            <div class="privacy-section">
+                                <h4>1. 수집하는 개인정보 항목</h4>
+                                <p>이름, 성별, 휴대폰번호, 연령대</p>
+                            </div>
+                            <div class="privacy-section">
+                                <h4>2. 개인정보 수집 및 이용 목적</h4>
+                                <p>• 커리어 진단 결과 제공 및 맞춤형 서비스 안내<br>
+                                   • 진단 결과 통계 분석 및 서비스 개선<br>
+                                   • 고객 문의 및 서비스 이용 관련 안내</p>
+                            </div>
+                            <div class="privacy-section">
+                                <h4>3. 개인정보 보유 및 이용기간</h4>
+                                <p>수집일로부터 1년간 보관 후 자동 삭제</p>
+                            </div>
+                            <div class="privacy-section">
+                                <h4>4. 개인정보 제3자 제공</h4>
+                                <p>수집된 개인정보는 제3자에게 제공하지 않습니다.</p>
+                            </div>
+                            <div class="privacy-section">
+                                <h4>5. 동의 거부권 및 불이익</h4>
+                                <p>개인정보 수집에 동의하지 않을 권리가 있으나, 동의 거부 시 진단 서비스 이용이 제한됩니다.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="consent-checkbox">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="privacy-consent" required>
+                                <span class="checkmark"></span>
+                                <span class="consent-text">개인정보 수집·이용에 <strong>동의합니다</strong></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 개인정보 입력 폼 -->
+                    <div class="personal-info-form">
+                        <h3>📝 기본 정보</h3>
+                        
+                        <div class="form-group">
+                            <label for="user-name">이름 <span class="required">*</span></label>
+                            <input type="text" id="user-name" name="name" required 
+                                   placeholder="실명을 입력해주세요" maxlength="10">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="user-phone">휴대폰번호 <span class="required">*</span></label>
+                            <input type="tel" id="user-phone" name="phone" required 
+                                   placeholder="010-1234-5678" pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>성별 <span class="required">*</span></label>
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" name="gender" value="남성" required>
+                                    <span class="radio-custom"></span>
+                                    남성
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="gender" value="여성" required>
+                                    <span class="radio-custom"></span>
+                                    여성
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="gender" value="기타" required>
+                                    <span class="radio-custom"></span>
+                                    기타
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>연령대 <span class="required">*</span></label>
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" name="age_group" value="19-24세" required>
+                                    <span class="radio-custom"></span>
+                                    19-24세
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="age_group" value="25-29세" required>
+                                    <span class="radio-custom"></span>
+                                    25-29세
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="age_group" value="30-34세" required>
+                                    <span class="radio-custom"></span>
+                                    30-34세
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="age_group" value="35세이상" required>
+                                    <span class="radio-custom"></span>
+                                    35세 이상
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 하단 네비게이션 -->
+                    <div class="navigation">
+                        <button id="personal-info-prev" class="btn-secondary">← 처음으로</button>
+                        <button id="personal-info-next" class="btn-primary" disabled>진단 시작하기 →</button>
                     </div>
                 </div>
             </section>
@@ -244,6 +368,8 @@
     <script src="assets/js/utils/constants.js"></script>
     <script src="assets/js/data.js"></script>
     <script src="assets/js/analytics.js"></script>
+    <script src="assets/js/supabase-client.js"></script>
+    <script src="assets/js/personal-info.js"></script>
     <!-- Managers -->
     <script src="assets/js/managers/UIManager.js"></script>
     <script src="assets/js/managers/QuestionRenderer.js"></script>

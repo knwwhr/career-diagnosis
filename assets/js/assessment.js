@@ -240,6 +240,9 @@ class AssessmentManager {
                 window.analyticsManager.trackResultsViewed(topJob);
             }
         }
+
+        // Supabase에 진단 결과 저장
+        this.saveAssessmentResults(results, actionPlan);
         
         // Initialize results display
         const resultsContainer = document.querySelector('.results-container');
@@ -311,6 +314,59 @@ class AssessmentManager {
         // If all steps are complete, go to step 3
         this.showSection('step3');
         this.loadStep(3);
+    }
+
+    async saveAssessmentResults(results, actionPlan) {
+        try {
+            const userId = getCurrentUserId();
+            if (!userId) {
+                console.warn('[Assessment] 사용자 ID가 없어 결과 저장 건너뜀');
+                return;
+            }
+
+            // RIASEC 점수 계산
+            const riasecScores = this.calculateRiasecScores();
+
+            const assessmentData = {
+                step1: this.responses.step1 || {},
+                step2: this.responses.step2 || {},
+                step3: this.responses.step3 || {},
+                recommendedJobs: results || [],
+                riasecScores: riasecScores,
+                actionPlan: actionPlan || []
+            };
+
+            const result = await saveAssessmentResult(userId, assessmentData);
+            
+            if (result.success) {
+                console.log('[Assessment] 진단 결과 저장 완료:', result.assessmentId);
+            } else {
+                console.error('[Assessment] 진단 결과 저장 실패:', result.error);
+            }
+
+        } catch (error) {
+            console.error('[Assessment] 진단 결과 저장 중 오류:', error);
+        }
+    }
+
+    calculateRiasecScores() {
+        // RIASEC 점수 계산 로직
+        const step1 = this.responses.step1 || {};
+        const riasecResponse = step1.personality_riasec;
+        
+        if (!riasecResponse) return {};
+
+        // 기본 RIASEC 매핑
+        const riasecMapping = {
+            'hands_on': { R: 5, I: 2, A: 1, S: 2, E: 3, C: 3 },
+            'analytical': { R: 2, I: 5, A: 2, S: 2, E: 2, C: 4 },
+            'creative': { R: 2, I: 3, A: 5, S: 3, E: 2, C: 1 },
+            'collaborative': { R: 2, I: 2, A: 3, S: 5, E: 3, C: 2 },
+            'leadership': { R: 3, I: 2, A: 2, S: 3, E: 5, C: 3 },
+            'organized': { R: 3, I: 3, A: 1, S: 2, E: 3, C: 5 }
+        };
+
+        return riasecMapping[riasecResponse] || {};
     }
 
     restart() {

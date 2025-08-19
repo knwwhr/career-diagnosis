@@ -1,0 +1,350 @@
+/* 개인정보 수집 폼 스타일 */
+
+/* 개인정보 동의서 스타일 */
+.privacy-notice {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.privacy-notice h3 {
+    color: #1e293b;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 12px;
+}
+
+.privacy-content {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    padding-right: 10px;
+}
+
+.privacy-section {
+    margin-bottom: 16px;
+}
+
+.privacy-section h4 {
+    color: #374151;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.privacy-section p {
+    color: #6b7280;
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* 동의 체크박스 */
+.consent-checkbox {
+    background: white;
+    border: 2px solid #3b82f6;
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    gap: 12px;
+}
+
+.checkbox-container input[type="checkbox"] {
+    display: none;
+}
+
+.checkmark {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #d1d5db;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    flex-shrink: 0;
+}
+
+.checkbox-container input[type="checkbox"]:checked + .checkmark {
+    background: #3b82f6;
+    border-color: #3b82f6;
+}
+
+.checkbox-container input[type="checkbox"]:checked + .checkmark::after {
+    content: '✓';
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.consent-text {
+    color: #374151;
+    user-select: none;
+}
+
+/* 개인정보 입력 폼 */
+.personal-info-form {
+    background: white;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.personal-info-form h3 {
+    color: #1e293b;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 12px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    color: #374151;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.required {
+    color: #ef4444;
+    font-weight: 700;
+}
+
+.form-group input[type="text"],
+.form-group input[type="tel"] {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s;
+    background: #fafbfc;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="tel"]:focus {
+    outline: none;
+    border-color: #3b82f6;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-group input[type="text"]:invalid,
+.form-group input[type="tel"]:invalid {
+    border-color: #ef4444;
+}
+
+/* 라디오 버튼 그룹 */
+.radio-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: #fafbfc;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.radio-option:hover {
+    border-color: #3b82f6;
+    background: #f0f9ff;
+}
+
+.radio-option input[type="radio"] {
+    display: none;
+}
+
+.radio-custom {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #d1d5db;
+    border-radius: 50%;
+    position: relative;
+    transition: all 0.3s;
+    flex-shrink: 0;
+}
+
+.radio-option input[type="radio"]:checked + .radio-custom {
+    border-color: #3b82f6;
+    background: #3b82f6;
+}
+
+.radio-option input[type="radio"]:checked + .radio-custom::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.radio-option input[type="radio"]:checked ~ * {
+    color: #3b82f6;
+}
+
+/* 네비게이션 버튼 */
+.navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-top: 32px;
+}
+
+.navigation .btn-primary:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.navigation .btn-primary:disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .privacy-notice,
+    .personal-info-form {
+        padding: 16px;
+        margin-bottom: 16px;
+    }
+    
+    .privacy-content {
+        max-height: 250px;
+    }
+    
+    .radio-group {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    .radio-option {
+        padding: 10px 12px;
+        font-size: 14px;
+    }
+    
+    .navigation {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .navigation button {
+        width: 100%;
+        padding: 16px;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .privacy-notice h3,
+    .personal-info-form h3 {
+        font-size: 18px;
+    }
+    
+    .privacy-section h4 {
+        font-size: 15px;
+    }
+    
+    .privacy-section p {
+        font-size: 13px;
+    }
+    
+    .form-group label {
+        font-size: 15px;
+    }
+    
+    .form-group input[type="text"],
+    .form-group input[type="tel"] {
+        font-size: 16px; /* iOS zoom 방지 */
+    }
+    
+    .radio-group {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 폼 유효성 검사 스타일 */
+.form-validation-error {
+    color: #ef4444;
+    font-size: 14px;
+    margin-top: 4px;
+    display: none;
+}
+
+.form-validation-error.show {
+    display: block;
+}
+
+.form-group.error input {
+    border-color: #ef4444 !important;
+    background: #fef2f2 !important;
+}
+
+.form-group.error label {
+    color: #ef4444;
+}
+
+/* 성공 상태 */
+.form-group.success input {
+    border-color: #10b981 !important;
+    background: #f0fdf4 !important;
+}
+
+/* 로딩 상태 */
+.navigation .btn-primary.loading {
+    position: relative;
+    color: transparent;
+}
+
+.navigation .btn-primary.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border: 2px solid transparent;
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
