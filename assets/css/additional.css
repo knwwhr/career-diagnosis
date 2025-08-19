@@ -1364,18 +1364,14 @@ input[type="checkbox"] {
 
 /* Mobile Navigation UX Enhancements */
 @media (max-width: 480px) {
-    /* 네비게이션 바 개선 */
+    /* 네비게이션 바 개선 - 고정 제거, 일반 플로우로 변경 */
     .navigation {
-        position: sticky;
-        bottom: 0;
-        left: 0;
-        right: 0;
+        position: relative;
         background: white;
-        padding: 12px 16px;
-        margin: 0;
-        box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.1);
-        border-top: 1px solid #e0e0e0;
-        z-index: 100;
+        padding: 16px;
+        margin: 1.5rem 0;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         display: flex;
         justify-content: space-between;
         gap: 12px;
@@ -1442,14 +1438,12 @@ input[type="checkbox"] {
     
     /* 결과 페이지 네비게이션 */
     .results-actions {
-        position: sticky;
-        bottom: 0;
+        position: relative;
         background: white;
-        padding: 16px;
-        margin: 0;
-        box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.1);
-        border-top: 1px solid #e0e0e0;
-        z-index: 100;
+        padding: 20px;
+        margin: 1.5rem 0;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         display: flex;
         flex-direction: column;
         gap: 12px;

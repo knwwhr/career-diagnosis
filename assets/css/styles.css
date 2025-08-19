@@ -151,6 +151,13 @@ main {
     cursor: not-allowed;
 }
 
+/* 버튼 처리 중 상태 (깜빡임 방지) */
+.btn-primary.processing,
+.btn-secondary.processing {
+    opacity: 0.8;
+    pointer-events: none;
+}
+
 .info-text {
     margin-top: 2rem;
     color: #34495e;

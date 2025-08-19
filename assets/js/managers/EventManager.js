@@ -121,10 +121,23 @@ class EventManager {
     }
 
     handleNextButton(e) {
+        // 중복 클릭 방지
+        if (e.target.classList.contains('processing')) {
+            return;
+        }
+        
         const stepMatch = e.target.id.match(/step(\d+)-next/);
         if (stepMatch) {
             const stepNum = parseInt(stepMatch[1]);
-            this.assessmentManager.handleNext(stepNum);
+            
+            // 처리 중 상태 표시
+            e.target.classList.add('processing');
+            
+            // 약간의 딜레이 후 실행 (깜빡임 방지)
+            setTimeout(() => {
+                this.assessmentManager.handleNext(stepNum);
+                e.target.classList.remove('processing');
+            }, 100);
         }
     }
 
