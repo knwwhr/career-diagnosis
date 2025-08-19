@@ -13,6 +13,7 @@ class AnalyticsManager {
         this.isGoogleAnalyticsLoaded = false;
         this.eventQueue = [];
         this.sessionId = this.generateSessionId();
+        this.initStartTime = Date.now();
         this.initializeAnalytics();
     }
 
@@ -20,13 +21,15 @@ class AnalyticsManager {
      * Google Analytics 초기화 및 로드 상태 확인
      */
     initializeAnalytics() {
-        // gtag 함수가 로드될 때까지 대기
+        // gtag 함수가 로드될 때까지 대기 (최대 10초)
         if (typeof gtag !== 'undefined') {
             this.isGoogleAnalyticsLoaded = true;
             this.flushEventQueue();
+        } else if ((Date.now() - this.initStartTime) < 10000) {
+            // 10초 내에서만 재시도, 간격도 늘림
+            setTimeout(() => this.initializeAnalytics(), 500);
         } else {
-            // gtag가 로드되지 않은 경우 재시도
-            setTimeout(() => this.initializeAnalytics(), 100);
+            console.log('[Analytics] gtag 로드 시간 초과, Analytics 비활성화');
         }
     }
 
