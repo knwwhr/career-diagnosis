@@ -18,9 +18,9 @@
     <!-- Supabase -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     
-    <link rel="stylesheet" href="assets/css/styles.css">
-    <link rel="stylesheet" href="assets/css/additional.css">
-    <link rel="stylesheet" href="assets/css/personal-info.css">
+    <link rel="stylesheet" href="assets/css/styles.css?v=2">
+    <link rel="stylesheet" href="assets/css/additional.css?v=2">
+    <link rel="stylesheet" href="assets/css/personal-info.css?v=2">
 </head>
 <body>
     <div class="container">
@@ -92,8 +92,6 @@
                 <div class="progress-container">
                     <div class="step-indicator">
                         <div class="step-number active">📋</div>
-                        <div class="step-title">기본 정보 입력</div>
-                        <div class="step-subtitle">개인맞춤 진단을 위한 정보를 입력해주세요</div>
                     </div>
                 </div>
 
@@ -104,7 +102,7 @@
                         <div class="privacy-content">
                             <div class="privacy-section">
                                 <h4>1. 수집하는 개인정보 항목</h4>
-                                <p>이름, 성별, 휴대폰번호, 연령대</p>
+                                <p>이름, 휴대폰번호, 성별, 연령대</p>
                             </div>
                             <div class="privacy-section">
                                 <h4>2. 개인정보 수집 및 이용 목적</h4>
@@ -137,62 +135,56 @@
 
                     <!-- 개인정보 입력 폼 -->
                     <div class="personal-info-form">
-                        <h3>📝 기본 정보</h3>
+                        <h3>📝 아래 정보를 입력해주세요.</h3>
                         
                         <div class="form-group">
                             <label for="user-name">이름 <span class="required">*</span></label>
-                            <input type="text" id="user-name" name="name" required 
-                                   placeholder="실명을 입력해주세요" maxlength="10">
+                            <input type="text" id="user-name" name="name" required maxlength="10">
                         </div>
 
                         <div class="form-group">
                             <label for="user-phone">휴대폰번호 <span class="required">*</span></label>
                             <input type="tel" id="user-phone" name="phone" required 
-                                   placeholder="010-1234-5678" pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}">
+                                   pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}">
                         </div>
 
                         <div class="form-group">
                             <label>성별 <span class="required">*</span></label>
-                            <div class="radio-group">
-                                <label class="radio-option">
-                                    <input type="radio" name="gender" value="남성" required>
-                                    <span class="radio-custom"></span>
+                            <div class="checkbox-group" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 8px;">
+                                <label class="checkbox-option" style="display: flex !important; align-items: center; gap: 8px; padding: 12px 16px; border: 2px solid #e5e7eb; border-radius: 8px; cursor: pointer; background: #fafbfc; font-size: 16px; font-weight: 500;">
+                                    <input type="checkbox" name="gender" value="남성" required style="display: none !important;">
+                                    <span class="checkbox-custom" style="width: 20px !important; height: 20px !important; border: 2px solid #d1d5db !important; border-radius: 4px !important; position: relative; display: inline-block !important; flex-shrink: 0;"></span>
                                     남성
                                 </label>
-                                <label class="radio-option">
-                                    <input type="radio" name="gender" value="여성" required>
-                                    <span class="radio-custom"></span>
+                                <label class="checkbox-option" style="display: flex !important; align-items: center; gap: 8px; padding: 12px 16px; border: 2px solid #e5e7eb; border-radius: 8px; cursor: pointer; background: #fafbfc; font-size: 16px; font-weight: 500;">
+                                    <input type="checkbox" name="gender" value="여성" required style="display: none !important;">
+                                    <span class="checkbox-custom" style="width: 20px !important; height: 20px !important; border: 2px solid #d1d5db !important; border-radius: 4px !important; position: relative; display: inline-block !important; flex-shrink: 0;"></span>
                                     여성
-                                </label>
-                                <label class="radio-option">
-                                    <input type="radio" name="gender" value="기타" required>
-                                    <span class="radio-custom"></span>
-                                    기타
                                 </label>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label>연령대 <span class="required">*</span></label>
-                            <div class="radio-group">
-                                <label class="radio-option">
-                                    <input type="radio" name="age_group" value="19-24세" required>
-                                    <span class="radio-custom"></span>
+                            <div class="checkbox-group" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 8px;">
+                                <label class="checkbox-option" style="display: flex !important; align-items: center; gap: 8px; padding: 12px 16px; border: 2px solid #e5e7eb; border-radius: 8px; cursor: pointer; background: #fafbfc; font-size: 16px; font-weight: 500;">
+                                    <input type="checkbox" name="age_group" value="19-24세" required style="display: none !important;">
+                                    <span class="checkbox-custom" style="width: 20px !important; height: 20px !important; border: 2px solid #d1d5db !important; border-radius: 4px !important; position: relative; display: inline-block !important; flex-shrink: 0;"></span>
                                     19-24세
                                 </label>
-                                <label class="radio-option">
-                                    <input type="radio" name="age_group" value="25-29세" required>
-                                    <span class="radio-custom"></span>
+                                <label class="checkbox-option" style="display: flex !important; align-items: center; gap: 8px; padding: 12px 16px; border: 2px solid #e5e7eb; border-radius: 8px; cursor: pointer; background: #fafbfc; font-size: 16px; font-weight: 500;">
+                                    <input type="checkbox" name="age_group" value="25-29세" required style="display: none !important;">
+                                    <span class="checkbox-custom" style="width: 20px !important; height: 20px !important; border: 2px solid #d1d5db !important; border-radius: 4px !important; position: relative; display: inline-block !important; flex-shrink: 0;"></span>
                                     25-29세
                                 </label>
-                                <label class="radio-option">
-                                    <input type="radio" name="age_group" value="30-34세" required>
-                                    <span class="radio-custom"></span>
+                                <label class="checkbox-option" style="display: flex !important; align-items: center; gap: 8px; padding: 12px 16px; border: 2px solid #e5e7eb; border-radius: 8px; cursor: pointer; background: #fafbfc; font-size: 16px; font-weight: 500;">
+                                    <input type="checkbox" name="age_group" value="30-34세" required style="display: none !important;">
+                                    <span class="checkbox-custom" style="width: 20px !important; height: 20px !important; border: 2px solid #d1d5db !important; border-radius: 4px !important; position: relative; display: inline-block !important; flex-shrink: 0;"></span>
                                     30-34세
                                 </label>
-                                <label class="radio-option">
-                                    <input type="radio" name="age_group" value="35세이상" required>
-                                    <span class="radio-custom"></span>
+                                <label class="checkbox-option" style="display: flex !important; align-items: center; gap: 8px; padding: 12px 16px; border: 2px solid #e5e7eb; border-radius: 8px; cursor: pointer; background: #fafbfc; font-size: 16px; font-weight: 500;">
+                                    <input type="checkbox" name="age_group" value="35세이상" required style="display: none !important;">
+                                    <span class="checkbox-custom" style="width: 20px !important; height: 20px !important; border: 2px solid #d1d5db !important; border-radius: 4px !important; position: relative; display: inline-block !important; flex-shrink: 0;"></span>
                                     35세 이상
                                 </label>
                             </div>
@@ -369,6 +361,7 @@
     <script src="assets/js/data.js"></script>
     <script src="assets/js/analytics.js"></script>
     <script src="assets/js/supabase-client.js"></script>
+    <script src="assets/js/checkbox-handler.js"></script>
     <script src="assets/js/personal-info.js"></script>
     <!-- Managers -->
     <script src="assets/js/managers/UIManager.js"></script>
