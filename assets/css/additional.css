@@ -1362,11 +1362,16 @@ input[type="checkbox"] {
     }
 }
 
-/* Mobile Navigation UX Enhancements */
-@media (max-width: 480px) {
-    /* 네비게이션 바 개선 - 고정 제거, 일반 플로우로 변경 */
-    .navigation {
-        position: relative;
+/* Mobile Navigation UX Enhancements - 하단 고정 완전 제거 */
+@media (max-width: 768px) {
+    /* 모든 navigation 요소에 대해 강제 적용 */
+    .navigation,
+    #personal-info .navigation,
+    #step1 .navigation,
+    #step2 .navigation,
+    #step3 .navigation,
+    .section .navigation {
+        position: relative !important;
         background: white;
         padding: 16px;
         margin: 1.5rem 0;
@@ -1375,6 +1380,13 @@ input[type="checkbox"] {
         display: flex;
         justify-content: space-between;
         gap: 12px;
+        /* 하단 고정 관련 속성들 완전 제거 */
+        bottom: auto !important;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        z-index: auto !important;
+        border-top: none !important;
     }
     
     /* 네비게이션 버튼 최적화 */

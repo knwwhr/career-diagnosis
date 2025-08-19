@@ -1036,12 +1036,17 @@ main {
         font-size: 0.9rem;
     }
     
-    /* 네비게이션 모바일 */
+    /* 네비게이션 모바일 - 하단 고정 방지 */
     .navigation {
+        position: relative !important;
         margin: 1.5rem 0;
         display: flex;
         justify-content: space-between;
         gap: 0.5rem;
+        bottom: auto !important;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
     }
     
     .navigation button {

@@ -332,8 +332,14 @@
     }
     
     .navigation {
+        position: relative !important;
         flex-direction: column;
         gap: 12px;
+        bottom: auto !important;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        z-index: auto !important;
     }
     
     .navigation button {
