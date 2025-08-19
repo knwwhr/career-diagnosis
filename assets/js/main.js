@@ -22,26 +22,47 @@ class CareerAssessmentApp {
     }
 
     initializeApp() {
-        // Initialize managers
-        this.assessmentManager = new AssessmentManager();
-        this.resultsManager = new ResultsManager(this.assessmentManager);
-        
-        // Set global reference for backwards compatibility
-        window.assessmentManager = this.assessmentManager;
-        window.resultsManager = this.resultsManager;
+        try {
+            // Check if required dependencies are available
+            if (typeof ASSESSMENT_DATA === 'undefined') {
+                throw new Error('ASSESSMENT_DATA is not defined');
+            }
+            
+            if (typeof Chart === 'undefined') {
+                throw new Error('Chart.js is not loaded');
+            }
 
-        // Setup global error handling
-        this.setupErrorHandling();
+            // Initialize managers
+            console.log('Initializing AssessmentManager...');
+            this.assessmentManager = new AssessmentManager();
+            
+            console.log('Initializing ResultsManager...');
+            this.resultsManager = new ResultsManager(this.assessmentManager);
+            
+            // Create a clean namespace for backward compatibility (if needed)
+            window.CareerApp = {
+                assessmentManager: this.assessmentManager,
+                resultsManager: this.resultsManager,
+                app: this
+            };
 
-        // Setup session management
-        this.setupSessionManagement();
+            // Setup global error handling
+            this.setupErrorHandling();
 
-        // Setup UI enhancements
-        this.setupUIEnhancements();
+            // Setup session management
+            this.setupSessionManagement();
 
-        // Previous session restoration removed - always start fresh
+            // Setup UI enhancements
+            this.setupUIEnhancements();
 
-        console.log('Career Assessment App initialized successfully');
+            // Previous session restoration removed - always start fresh
+
+            console.log('Career Assessment App initialized successfully');
+        } catch (error) {
+            console.error('Failed to initialize app:', error);
+            this.showError('애플리케이션을 초기화하는 중 오류가 발생했습니다: ' + error.message);
+            throw error;
+        }
     }
 
     setupErrorHandling() {
@@ -406,15 +427,18 @@ class CareerAssessmentApp {
 // Global app instance
 let app;
 
-// Initialize app when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
+// Ensure initialization happens after all scripts are loaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        app = new CareerAssessmentApp();
+    });
+} else {
     app = new CareerAssessmentApp();
-    
-    // Make app globally available for debugging
-    window.app = app;
-    
-    // Add development helpers
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+}
+
+// Add development helpers
+if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    document.addEventListener('DOMContentLoaded', () => {
         console.log('Development mode - Debug helpers available');
         console.log('Use app.getDebugInfo() or app.exportDebugData() for debugging');
         
@@ -424,8 +448,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log('Debug Info:', app.getDebugInfo());
             }
         });
-    }
-});
+    });
+}
 
 // Service Worker registration for future offline support
 if ('serviceWorker' in navigator) {
@@ -433,6 +457,53 @@ if ('serviceWorker' in navigator) {
         // Future: Register service worker for offline capability
         // navigator.serviceWorker.register('/sw.js');
     });
+}
+
+// Global functions for backward compatibility
+function startAssessment() {
+    // Wait for app to be initialized
+    if (!app && !window.CareerApp) {
+        console.warn('App not initialized yet, retrying...');
+        setTimeout(startAssessment, 100);
+        return;
+    }
+    
+    // Analytics: 진단 시작 이벤트
+    if (window.analyticsManager) {
+        window.analyticsManager.trackAssessmentStart();
+    }
+    
+    if (window.CareerApp && window.CareerApp.assessmentManager) {
+        window.CareerApp.assessmentManager.showSection('step1');
+        window.CareerApp.assessmentManager.loadStep(1);
+    } else if (app && app.assessmentManager) {
+        app.assessmentManager.showSection('step1');
+        app.assessmentManager.loadStep(1);
+    }
+}
+
+function goBackToIncompleteStep() {
+    if (window.CareerApp && window.CareerApp.assessmentManager) {
+        window.CareerApp.assessmentManager.goBackToIncompleteStep();
+    } else if (app && app.assessmentManager) {
+        app.assessmentManager.goBackToIncompleteStep();
+    }
+}
+
+function restartAssessment() {
+    if (window.CareerApp && window.CareerApp.assessmentManager) {
+        window.CareerApp.assessmentManager.restart();
+    } else if (app && app.assessmentManager) {
+        app.assessmentManager.restart();
+    }
+}
+
+function retryCalculation() {
+    if (window.CareerApp && window.CareerApp.assessmentManager) {
+        window.CareerApp.assessmentManager.retryCalculation();
+    } else if (app && app.assessmentManager) {
+        app.assessmentManager.retryCalculation();
+    }
 }
 
 // Export for module usage

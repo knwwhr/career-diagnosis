@@ -4,6 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>커리어 진단 도구</title>
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-736XG0NZE4"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-736XG0NZE4');
+    </script>
+    
     <link rel="stylesheet" href="assets/css/styles.css">
     <link rel="stylesheet" href="assets/css/additional.css">
 </head>
@@ -229,7 +240,19 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Utils and Data -->
+    <script src="assets/js/utils/constants.js"></script>
     <script src="assets/js/data.js"></script>
+    <script src="assets/js/analytics.js"></script>
+    <!-- Managers -->
+    <script src="assets/js/managers/UIManager.js"></script>
+    <script src="assets/js/managers/QuestionRenderer.js"></script>
+    <script src="assets/js/managers/ValidationManager.js"></script>
+    <script src="assets/js/managers/OptionHandler.js"></script>
+    <script src="assets/js/managers/StateManager.js"></script>
+    <script src="assets/js/managers/AnalysisManager.js"></script>
+    <script src="assets/js/managers/EventManager.js"></script>
+    <!-- Core -->
     <script src="assets/js/assessment.js"></script>
     <script src="assets/js/results.js"></script>
     <script src="assets/js/main.js"></script>

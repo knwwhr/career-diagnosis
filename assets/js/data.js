@@ -1564,9 +1564,26 @@ class AssessmentAPI {
                 practicalTip: "업계별 현직자 인터뷰나 직업 체험 프로그램에 참여해보면 어떨까요? 실제 업무를 경험해보면 방향성을 찾는 데 도움이 될 것 같아요."
             });
             
+            // 관심 분야 ID를 한글로 변환
+            const industryMapping = {
+                'technology': '기술/개발',
+                'business_strategy': '경영/기획',
+                'marketing_sales': '마케팅/영업',
+                'creative_design': '디자인/창작',
+                'finance': '금융/투자',
+                'education_research': '교육/연구',
+                'healthcare': '의료/헬스케어',
+                'media_entertainment': '미디어/엔터테인먼트',
+                'manufacturing': '제조/생산',
+                'public_social': '공공/사회'
+            };
+            
+            const industryId = responses.step2?.industry_interest?.[0];
+            const industryText = industryMapping[industryId] || '선택하신 분야';
+            
             actionPlan.push({
                 title: "관심 분야 심화 탐구",
-                description: `${responses.step2?.industry_interest?.[0] || '선택하신 분야'}에 대해 더 깊이 알아보세요.`,
+                description: `${industryText}에 대해 더 깊이 알아보세요.`,
                 timeline: "1개월",
                 priority: "1순위", 
                 priorityLabel: "🎯 탐색",
@@ -1627,7 +1644,23 @@ class AssessmentAPI {
         }
         
         if (!preparationStatus.includes('networking')) {
-            const industryInterest = responses.step2?.industry_interest?.[0] || '관심분야';
+            // 관심 분야 ID를 한글 텍스트로 변환
+            const industryMapping = {
+                'technology': '기술/개발',
+                'business_strategy': '경영/기획',
+                'marketing_sales': '마케팅/영업',
+                'creative_design': '디자인/창작',
+                'finance': '금융/투자',
+                'education_research': '교육/연구',
+                'healthcare': '의료/헬스케어',
+                'media_entertainment': '미디어/엔터테인먼트',
+                'manufacturing': '제조/생산',
+                'public_social': '공공/사회'
+            };
+            
+            const industryId = responses.step2?.industry_interest?.[0];
+            const industryInterest = industryMapping[industryId] || '관심분야';
+            
             actionPlan.push({
                 title: "네트워킹 활동",
                 description: "업계 전문가들과의 연결고리를 만들어보세요.",
@@ -1706,10 +1739,22 @@ class AssessmentAPI {
                         'creativity': 'creativity',
                         'planning': 'planning',
                         'design': 'design',
-                        'writing': 'writing'
+                        'writing': 'writing',
+                        'problem_solving': 'analysis', // 문제해결 능력은 분석/사고력으로 매핑
+                        'user_research': 'analysis', // 사용자 조사는 분석/사고력으로 매핑
+                        'data_analysis': 'data_analysis', // 데이터 분석은 직접 매핑
+                        'presentation': 'presentation', // 발표는 직접 매핑
+                        'teamwork': 'communication', // 팀워크는 커뮤니케이션으로 매핑
+                        'leadership': 'communication' // 리더십은 커뮤니케이션으로 매핑
                     };
                     
-                    const userSkillLevel = responses.step2?.skill_confidence?.[skillConfidenceMapping[skill]] || 1;
+                    const mappedSkillId = skillConfidenceMapping[skill];
+                    const userSkillLevel = responses.step2?.skill_confidence?.[mappedSkillId];
+                    
+                    // 사용자가 실제로 응답한 스킬에 대해서만 액션 플랜 생성
+                    if (userSkillLevel === undefined || userSkillLevel === null) {
+                        return; // 응답하지 않은 스킬은 액션 플랜에서 제외
+                    }
                     const learningMethodText = learningMethod === 'online_course' ? '온라인 강의' : 
                                             learningMethod === 'bootcamp' ? '부트캠프' :
                                             learningMethod === 'mentoring' ? '멘토링' :
