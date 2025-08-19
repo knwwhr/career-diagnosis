@@ -101,12 +101,6 @@ class AssessmentManager {
         }
         
         if (stepNum < 3) {
-            // Analytics: 단계 완료 이벤트
-            if (window.analyticsManager) {
-                const stepNames = ['', '강점발견', '직무매칭', '실행계획'];
-                window.analyticsManager.trackStepCompleted(stepNum, stepNames[stepNum]);
-            }
-            
             // 1-2단계: 단계 완료 시 응원 팝업
             this.uiManager.showStepCompletionPopup(stepNum).then((shouldContinue) => {
                 if (shouldContinue) {
@@ -115,14 +109,24 @@ class AssessmentManager {
                 }
                 // shouldContinue가 false면 사용자가 멈추기를 선택한 것이므로 아무것도 하지 않음
             });
-        } else {
-            // Analytics: 마지막 단계 완료 이벤트
-            if (window.analyticsManager) {
-                window.analyticsManager.trackStepCompleted(3, '실행계획');
-            }
             
+            // Analytics: 단계 완료 이벤트 (비동기로 나중에 처리)
+            setTimeout(() => {
+                if (window.analyticsManager) {
+                    const stepNames = ['', '강점발견', '직무매칭', '실행계획'];
+                    window.analyticsManager.trackStepCompleted(stepNum, stepNames[stepNum]);
+                }
+            }, 10);
+        } else {
             // 3단계: validation 통과 후 결과 화면으로
             this.calculateAndShowResults();
+            
+            // Analytics: 마지막 단계 완료 이벤트 (비동기로 나중에 처리)
+            setTimeout(() => {
+                if (window.analyticsManager) {
+                    window.analyticsManager.trackStepCompleted(3, '실행계획');
+                }
+            }, 10);
         }
     }
 

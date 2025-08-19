@@ -122,7 +122,7 @@ class EventManager {
 
     handleNextButton(e) {
         // 중복 클릭 방지
-        if (e.target.classList.contains('processing')) {
+        if (e.target.classList.contains('processing') || e.target.disabled) {
             return;
         }
         
@@ -130,14 +130,8 @@ class EventManager {
         if (stepMatch) {
             const stepNum = parseInt(stepMatch[1]);
             
-            // 처리 중 상태 표시
-            e.target.classList.add('processing');
-            
-            // 약간의 딜레이 후 실행 (깜빡임 방지)
-            setTimeout(() => {
-                this.assessmentManager.handleNext(stepNum);
-                e.target.classList.remove('processing');
-            }, 100);
+            // 즉시 실행 (딜레이 제거)
+            this.assessmentManager.handleNext(stepNum);
         }
     }
 

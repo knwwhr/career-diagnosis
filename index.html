@@ -18,11 +18,11 @@
     <!-- Supabase -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     
-    <link rel="stylesheet" href="assets/css/styles.css?v=4">
-    <link rel="stylesheet" href="assets/css/additional.css?v=4">
-    <link rel="stylesheet" href="assets/css/personal-info.css?v=4">
+    <link rel="stylesheet" href="assets/css/styles.css?v=5">
+    <link rel="stylesheet" href="assets/css/additional.css?v=5">
+    <link rel="stylesheet" href="assets/css/personal-info.css?v=5">
     
-    <!-- 네비게이션 하단 고정 완전 제거 -->
+    <!-- 네비게이션 하단 고정 완전 제거 & 가로 배열 유지 -->
     <style>
         @media (max-width: 768px) {
             .navigation,
@@ -42,6 +42,15 @@
                 border-radius: 12px !important;
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
                 border-top: none !important;
+                display: flex !important;
+                flex-direction: row !important;
+                gap: 12px !important;
+            }
+            
+            .navigation button {
+                flex: 1 !important;
+                min-width: 0 !important;
+                white-space: nowrap !important;
             }
         }
     </style>

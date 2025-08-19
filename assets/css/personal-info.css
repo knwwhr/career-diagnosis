@@ -333,7 +333,7 @@
     
     .navigation {
         position: relative !important;
-        flex-direction: column;
+        flex-direction: row;
         gap: 12px;
         bottom: auto !important;
         top: auto !important;
@@ -343,9 +343,10 @@
     }
     
     .navigation button {
-        width: 100%;
+        flex: 1;
         padding: 16px;
         font-size: 16px;
+        min-width: 0; /* flex 요소가 내용보다 작아질 수 있도록 */
     }
 }
 
