@@ -104,11 +104,16 @@ class AnalyticsManager {
      * 진단 완료 이벤트
      */
     trackAssessmentCompleted(totalTimeSpent = null, totalQuestions = null) {
+        // 저장된 유입 경로 데이터 가져오기
+        const entryData = JSON.parse(sessionStorage.getItem('entry_data') || '{}');
+        
         this.trackEvent('assessment_completed', {
             event_category: 'conversion',
             event_label: 'career_assessment_finished',
             total_time_spent_seconds: totalTimeSpent,
             total_questions: totalQuestions,
+            // 유입 경로 정보 포함
+            ...entryData,
             completion_rate: 100,
             value: 10 // 높은 가치 이벤트
         });
@@ -220,10 +225,52 @@ class AnalyticsManager {
             ...customParameters
         });
     }
+
+    /**
+     * UTM 파라미터 및 Referrer 추적
+     */
+    trackPageEntry() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const referrer = document.referrer;
+        
+        // UTM 파라미터 수집
+        const utmData = {
+            utm_source: urlParams.get('utm_source') || 'direct',
+            utm_medium: urlParams.get('utm_medium') || 'none',
+            utm_campaign: urlParams.get('utm_campaign') || 'none',
+            utm_content: urlParams.get('utm_content') || 'none',
+            utm_term: urlParams.get('utm_term') || 'none',
+            referrer: referrer || 'direct',
+            landing_page: window.location.pathname + window.location.search
+        };
+
+        // Referrer 도메인 추출
+        if (referrer) {
+            try {
+                const referrerDomain = new URL(referrer).hostname;
+                utmData.referrer_domain = referrerDomain;
+            } catch (e) {
+                utmData.referrer_domain = 'unknown';
+            }
+        }
+
+        // 페이지 진입 이벤트 전송
+        this.trackEvent('page_entry', utmData);
+        
+        // 세션 스토리지에 저장 (진단 완료시 함께 전송)
+        sessionStorage.setItem('entry_data', JSON.stringify(utmData));
+        
+        console.log('[Analytics] 유입 경로 추적:', utmData);
+    }
 }
 
 // 전역 인스턴스 생성
 window.analyticsManager = new AnalyticsManager();
+
+// 페이지 로드시 유입 경로 자동 추적
+document.addEventListener('DOMContentLoaded', () => {
+    window.analyticsManager.trackPageEntry();
+});
 
 // 전역 함수로 등록 (호환성)
 window.trackEvent = (eventName, parameters) => {
