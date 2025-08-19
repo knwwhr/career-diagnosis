@@ -5,6 +5,8 @@ class AnalysisManager {
     }
 
     showAnalysisLoading() {
+        console.log('[AnalysisManager] Showing analysis loading');
+        
         // Show analysis loading section
         this.assessmentManager.showSection('analysis-loading');
         
@@ -18,6 +20,8 @@ class AnalysisManager {
     }
 
     async performAnalysisSteps() {
+        console.log('[AnalysisManager] Performing analysis steps');
+        
         const steps = [
             { id: 'step-riasec', duration: 1200, progress: 25 },
             { id: 'step-matching', duration: 1500, progress: 50 },
@@ -30,15 +34,22 @@ class AnalysisManager {
             
             // Activate current step
             const stepElement = document.getElementById(step.id);
-            stepElement.classList.add('active');
+            if (stepElement) {
+                stepElement.classList.add('active');
+            }
             
             // Update progress gradually
             await this.animateProgress(step.progress, step.duration);
             
             // Complete current step
-            stepElement.classList.remove('active');
-            stepElement.classList.add('completed');
-            stepElement.querySelector('.step-status').textContent = '';
+            if (stepElement) {
+                stepElement.classList.remove('active');
+                stepElement.classList.add('completed');
+                const statusElement = stepElement.querySelector('.step-status');
+                if (statusElement) {
+                    statusElement.textContent = '✅';
+                }
+            }
             
             // Small delay between steps
             if (i < steps.length - 1) {

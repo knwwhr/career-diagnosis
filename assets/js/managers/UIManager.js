@@ -334,6 +334,9 @@ class UIManager {
 
     // Loading states
     showLoading(message = '처리 중...') {
+        console.trace('[UIManager] showLoading called:', message);
+        return; // 완전히 비활성화
+        
         const existingLoader = document.querySelector('.ui-loader');
         if (existingLoader) return;
 

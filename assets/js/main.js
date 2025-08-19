@@ -101,7 +101,7 @@ class CareerAssessmentApp {
 
     setupUIEnhancements() {
         // Add loading states (비활성화 - 사용자 경험 개선)
-        // this.addLoadingStates();
+        this.addLoadingStates();
 
         // Add keyboard navigation
         this.setupKeyboardNavigation();
@@ -114,36 +114,9 @@ class CareerAssessmentApp {
     }
 
     addLoadingStates() {
-        const originalFetch = window.fetch;
-        window.fetch = async (...args) => {
-            const url = args[0];
-            
-            // 특정 요청들은 로딩 스피너 표시하지 않음
-            const skipLoading = [
-                'google-analytics.com',
-                'googletagmanager.com',
-                'gtag',
-                'analytics',
-                'supabase.co'
-            ].some(domain => url && url.includes && url.includes(domain));
-            
-            if (!skipLoading) {
-                this.showLoading();
-            }
-            
-            try {
-                const response = await originalFetch(...args);
-                if (!skipLoading) {
-                    this.hideLoading();
-                }
-                return response;
-            } catch (error) {
-                if (!skipLoading) {
-                    this.hideLoading();
-                }
-                throw error;
-            }
-        };
+        // 완전히 비활성화 - 사용자 경험 개선을 위해
+        console.log('[App] Loading states disabled for better UX');
+        return;
     }
 
     setupKeyboardNavigation() {
@@ -300,6 +273,9 @@ class CareerAssessmentApp {
     }
 
     showLoading(message = '처리 중...') {
+        console.trace('[Main] showLoading called:', message);
+        return; // 완전히 비활성화
+        
         const existingLoader = document.querySelector('.app-loader');
         if (existingLoader) return;
 
